@@ -1,0 +1,17 @@
+# Nunca subir secretos
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Dependencias y builds
+node_modules/
+.next/
+out/
+dist/
+.vercel/
+
+# Sistema
+.DS_Store
+*.log

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{subject}}</title>
+<!--
+  Plantilla base de correo (compatible con Gmail, Outlook, Apple Mail).
+  Los clientes de correo NO soportan CSS variables ni vidrio: aquí va la paleta plana de Axis.
+  Variables: {{first_name|Hola}}, {{subject}}, {{preheader}}, {{cuerpo_html}}, {{cta_url}}, {{cta_texto}}, {{unsubscribe_url}}
+-->
+<style>
+  body { margin:0; padding:0; background:#f2f1fa; }
+  .wrap { width:100%; background:#f2f1fa; padding:32px 12px; }
+  .card { max-width:600px; margin:0 auto; background:#ffffff; border-radius:20px; overflow:hidden; border:1px solid #e6e3f3; }
+  .head { background:linear-gradient(135deg,#7c3aed,#d946ef); padding:28px 32px; color:#ffffff; font-family:Arial,Helvetica,sans-serif; }
+  .head .brand { font-size:20px; font-weight:800; letter-spacing:-0.3px; }
+  .body { padding:32px; font-family:Arial,Helvetica,sans-serif; color:#17162b; font-size:16px; line-height:1.55; }
+  .body h1 { font-size:24px; margin:0 0 16px; color:#17162b; }
+  .body p { margin:0 0 16px; }
+  .btn { display:inline-block; background:#7c3aed; color:#ffffff !important; text-decoration:none; padding:14px 26px; border-radius:999px; font-weight:700; }
+  .foot { padding:20px 32px 28px; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.5; color:#6b6788; border-top:1px solid #e6e3f3; }
+  .foot a { color:#6d28d9; }
+  .pre { display:none; font-size:1px; color:#f2f1fa; line-height:1px; max-height:0; overflow:hidden; }
+  @media (prefers-color-scheme: dark) {
+    .wrap { background:#08081a; } .card { background:#16142e; border-color:#2a2650; }
+    .body, .body h1 { color:#f2f1fc; } .foot { color:#aca8cc; border-color:#2a2650; } .foot a { color:#a78bfa; }
+  }
+</style>
+</head>
+<body>
+<span class="pre">{{preheader}}</span>
+<div class="wrap">
+  <div class="card">
+    <div class="head"><div class="brand">Sinergéticos</div></div>
+    <div class="body">
+      <h1>{{first_name|Hola}}, {{subject}}</h1>
+      {{cuerpo_html}}
+      <p style="margin-top:24px"><a class="btn" href="{{cta_url}}">{{cta_texto}}</a></p>
+    </div>
+    <div class="foot">
+      Recibes este correo porque te registraste, compraste o eres miembro de Sinergéticos.<br>
+      Sinergéticos · [Dirección física legal] · Zapopan, Jalisco, México<br>
+      <a href="{{unsubscribe_url}}">Darme de baja</a> · <a href="https://www.sinergeticos.com/privacidad">Aviso de privacidad</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
