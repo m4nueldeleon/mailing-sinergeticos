@@ -21,22 +21,31 @@ ya tomadas, la capa visual que debe copiar y el contrato de datos con **Axis** (
 ## Qué hay en el repo
 
 ```
-docs/            Contexto, hallazgos y requisitos (léelos en orden, son cortos)
-estilo-axis/     CSS de tokens, layout raíz con fuentes, sidebar, nav, íconos, toggle de tema, logo
+starter/         App Next 16 EJECUTABLE con el shell de Axis ya conectado (build verde) ← empieza aquí
+docs/            Contexto, hallazgos y requisitos (léelos en orden, son cortos) + capturas/ + BITACORA.md
+estilo-axis/     CSS de tokens, layout raíz con fuentes, sidebar, nav, íconos, toggle de tema, logo (originales de Axis)
 esquema/         DDL de las tablas de Axis que se leen + esquema propuesto para la app
 ejemplos/        Scripts mínimos: enviar prueba, enviar lote, verificar webhook, plantilla HTML
 .env.example     Variables que la app necesita (los valores se entregan en privado)
 ```
+
+## Así se ve el starter (mismo look que Axis)
+
+| Claro | Oscuro |
+|-------|--------|
+| ![Campañas claro](docs/capturas/campanas-light.png) | ![Campañas oscuro](docs/capturas/campanas-dark.png) |
 
 ## Cómo arrancar (30 minutos)
 
 1. Lee `docs/01` → `docs/07` (≈15 min).
 2. Pide en privado: `RESEND_API_KEY` (una key nueva solo para esta app), el acceso de **solo lectura**
    a la base de Axis y el `RESEND_WEBHOOK_SECRET` cuando registres tu webhook.
-3. Crea tu proyecto (Next.js + Tailwind v4 es lo que usa Axis; no es obligatorio, pero facilita copiar el estilo).
-4. Copia `estilo-axis/globals.css` y `estilo-axis/layout.tsx` a tu app; ya tienes el look de Axis.
-5. Corre `ejemplos/enviar-prueba.mjs` con tu key para confirmar que Resend responde.
-6. Construye a tu medida siguiendo `docs/06-requisitos-funcionales.md`.
+3. `cd starter && cp .env.example .env.local && npm install && npm run dev` → ya tienes el look de Axis,
+   la navegación, el envío por lotes, la lectura de segmentos desde Axis, la liga de baja y el webhook
+   (ver `starter/README.md` para qué está listo y qué es stub).
+   Si prefieres otro stack, toma solo `estilo-axis/` y los `ejemplos/`.
+4. Corre `node ejemplos/enviar-prueba.mjs tu@correo.com` con tu key para confirmar que Resend responde.
+5. Construye a tu medida siguiendo `docs/06-requisitos-funcionales.md`.
 
 ## Stack de referencia (el que usa Axis)
 
