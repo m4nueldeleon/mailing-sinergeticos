@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { IconLogout } from "@/components/icons";
+import { salir } from "@/app/login/actions";
 import { NavLinks, type NavItem } from "./nav-links";
 
 /** Sidebar colapsable (estado recordado por navegador). */
@@ -95,6 +97,15 @@ export function Sidebar({
           </div>
         ) : null}
         <ThemeToggle />
+        <form action={salir}>
+          <button
+            type="submit"
+            title="Salir"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[var(--text-3)] transition hover:text-[var(--danger)]"
+          >
+            <IconLogout width={15} height={15} />
+          </button>
+        </form>
       </div>
     </aside>
   );

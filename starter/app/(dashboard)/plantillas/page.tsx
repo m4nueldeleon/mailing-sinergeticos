@@ -1,19 +1,52 @@
+import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
-import { PorConstruir } from "@/components/por-construir";
+import { listarPlantillas } from "./actions";
 
-const ITEMS = [
-  "Plantilla base (ejemplos/plantilla-base.html) con variables {{first_name}}, {{unsubscribe_url}}",
-  "Editor por bloques: título, texto, botón, imagen, separador + modo HTML",
-  "Vista previa claro/oscuro y en móvil",
-  "Biblioteca de plantillas guardadas; duplicar",
-  "Validación: no se puede guardar sin liga de baja ni sin versión texto",
-] as const;
+export default async function Page() {
+  const plantillas = await listarPlantillas();
 
-export default function Page() {
   return (
     <>
-      <PageHeader title="Plantillas" subtitle="Correos con la marca. Pie con liga de baja obligatoria." />
-      <PorConstruir items={ITEMS} />
+      <PageHeader
+        title="Plantillas"
+        subtitle="Editor por bloques, HTML crudo y envío de prueba."
+        action={
+          <Link href="/plantillas/nueva" className="btn-accent">
+            + Nueva plantilla
+          </Link>
+        }
+      />
+
+      {plantillas.length === 0 ? (
+        <section className="glass rise p-6 text-center text-[var(--text-2)]">Sin plantillas todavía — crea la primera.</section>
+      ) : (
+        <section className="glass rise p-2">
+          <table className="table-glass">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Asunto</th>
+                <th>Actualizada</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {plantillas.map((p) => (
+                <tr key={p.id}>
+                  <td>{p.name}</td>
+                  <td className="text-[var(--text-2)]">{p.subject}</td>
+                  <td className="text-[var(--text-3)]">{new Date(p.updated_at).toLocaleString("es-MX")}</td>
+                  <td>
+                    <Link href={`/plantillas/${p.id}`} className="btn-ghost !py-1 !text-xs">
+                      Editar
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      )}
     </>
   );
 }
