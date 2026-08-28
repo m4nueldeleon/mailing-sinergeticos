@@ -1,10 +1,14 @@
 # 07 · Dominio y DNS
 
+> **Estado 27-ago-2026**: `mailing.sinergeticos.com` ya apunta a Vercel y la app está publicada;
+> `boletin.sinergeticos.com` ya está **verificado** en Resend (DKIM + MX puestos). Lo único que
+> falta en DNS es el **DMARC** del dominio raíz (paso 3 de abajo).
+
 ## Dos dominios distintos, dos roles
 | Dominio | Para qué | Quién lo administra |
 |---------|----------|---------------------|
 | `mailing.sinergeticos.com` | la **app** (Vercel) | Fer/equipo de la app |
-| `boletin.sinergeticos.com` (propuesto) | **remitente** de los masivos (Resend) | Manuel/equipo DNS |
+| `boletin.sinergeticos.com` (verificado) | **remitente** de los masivos (Resend) | Manuel/equipo DNS |
 | `envios.sinergeticos.com` | remitente **transaccional** de Axis — **no tocar** | equipo de Axis |
 
 ¿Por qué un subdominio de envío aparte? Los proveedores de correo puntúan reputación por

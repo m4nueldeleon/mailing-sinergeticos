@@ -35,6 +35,12 @@ ejemplos/        Scripts mínimos: enviar prueba, enviar lote, verificar webhook
 |-------|--------|
 | ![Campañas claro](docs/capturas/campanas-light.png) | ![Campañas oscuro](docs/capturas/campanas-dark.png) |
 
+## Estado
+
+- **Producción**: https://mailing.sinergeticos.com (Vercel, team Sinergéticos; cada push a `main` despliega el `starter/`).
+- **Base propia**: Supabase con `esquema/mailing-propuesto.sql` aplicado.
+- **Acceso a Axis**: pendiente de que apliquen el PR de `mailing_ro` (ver `docs/BITACORA.md`).
+
 ## Cómo arrancar (30 minutos)
 
 1. Lee `docs/01` → `docs/07` (≈15 min).

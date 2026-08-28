@@ -16,3 +16,18 @@ Log vivo de qué se hizo, cuándo y por qué. Una entrada por hito.
 - **Pendiente para quien construya**: Supabase Auth (stub en `lib/auth.ts`), aplicar
   `esquema/mailing-propuesto.sql`, pedir rol de solo lectura en Axis, key de Resend propia,
   subdominio de marketing verificado, subir de plan en Resend.
+
+## 2026-08-27 (noche) · Publicación + acceso a Axis
+- **Fase 1-2 de Fer** integradas en `main` (login real con Supabase, Listas/segmentos, Plantillas).
+- **LIVE: https://mailing.sinergeticos.com** — proyecto Vercel `mailing-sinergeticos` en el team de
+  Sinergéticos (root `starter/`, repo conectado: cada push a `main` despliega). Dominio verificado
+  (el CNAME en GoDaddy ya existía). Variables cargadas: Supabase, Resend (key dedicada), secreto
+  del webhook, `UNSUBSCRIBE_SECRET`, `MAIL_ENABLED=false`, `MAIL_FROM hola@boletin.sinergeticos.com`.
+- **Resend**: `boletin.sinergeticos.com` verificado (marketing, separado de `envios.` de Axis);
+  webhook registrado hacia `/api/hooks/resend` con los 7 eventos.
+- **Axis**: PR #6 `feat/mailing-ro-rls` en `synergy-axis` — migración `0135_mailing_ro.sql`
+  (rol `mailing_ro` de solo lectura + 3 policies SELECT en `contacts`, `memberships`,
+  `mail_supresion`). La aplica el equipo de Axis; después entregan `AXIS_DATABASE_URL_RO`.
+- **Pendientes**: `AXIS_DATABASE_URL_RO` (tras el PR), `DATABASE_URL` (password de la base
+  propia; o migrar `lib/supresion.ts` a supabase-js), DMARC en `_dmarc.sinergeticos.com`,
+  subir plan de Resend antes del primer envío real.
