@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { IconLogout } from "@/components/icons";
 import { salir } from "@/app/login/actions";
@@ -60,13 +59,12 @@ export function Sidebar({
         href="/"
         className={`flex items-center gap-2.5 py-2 ${colapsada ? "justify-center px-0" : "px-2"}`}
       >
-        <Image
-          src="/brand/orb.png"
+        <img
+          src="/brand/mark.svg"
           alt="Sinergéticos Mailing"
           width={38}
           height={38}
-          priority
-          className="h-[38px] w-[38px] shrink-0 drop-shadow-[0_6px_16px_var(--accent-glow)]"
+          className="h-[38px] w-[38px] shrink-0 drop-shadow-[0_4px_10px_var(--accent-glow)]"
         />
         {!colapsada ? (
           <span className="font-display text-lg font-bold tracking-tight">

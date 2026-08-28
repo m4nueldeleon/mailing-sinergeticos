@@ -3,106 +3,94 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ══════════════════════════════════════════════════════════
-   Synergy Axis — sistema Liquid Glass Espacial
-   Concepto: las fuentes de datos se conectan como constelaciones.
-   Tema claro: nebulosa lavanda + vidrio blanco iridiscente
-   Tema oscuro: espacio profundo + vidrio de nebulosa
+   Synergy Mailing — sistema "Regio" (azul rey + dorado)
+   Plataforma limpia sobre blanco, botones que se noten,
+   destellos dorados como acento elegante. Tipo ActiveCampaign
+   / Kajabi: intuitiva, poco "panel de control", con calidez.
    ══════════════════════════════════════════════════════════ */
 
 :root {
-  --accent: #7c3aed;           /* violeta */
-  --accent-strong: #6d28d9;
-  --accent-soft: rgba(124, 58, 237, 0.1);
-  --accent-glow: rgba(124, 58, 237, 0.35);
-  --accent-cyan: #0891b2;
-  --accent-cyan-soft: rgba(8, 145, 178, 0.12);
-  --accent-magenta: #d946ef;
-  --accent-magenta-soft: rgba(217, 70, 239, 0.12);
-  --danger: #e5484d;
-  --danger-soft: rgba(229, 72, 77, 0.12);
-  --success: #0a7f57;          /* subido de #0e9f6e: 3.02:1 → 4.6:1 sobre --bg */
+  --accent: #1e3a8a;              /* azul rey */
+  --accent-strong: #16296b;
+  --accent-soft: rgba(30, 58, 138, 0.08);
+  --accent-glow: rgba(30, 58, 138, 0.28);
+  --accent-cyan: #2563eb;         /* azul secundario, para info/enlaces */
+  --accent-cyan-soft: rgba(37, 99, 235, 0.1);
+  --accent-magenta: #c9972e;      /* dorado — reusa el slot "magenta" del tema base */
+  --accent-magenta-soft: rgba(201, 151, 46, 0.14);
+  --danger: #c0392b;
+  --danger-soft: rgba(192, 57, 43, 0.1);
+  --success: #0a7f57;
   --success-soft: rgba(14, 159, 110, 0.12);
 
-  --bg: #f2f1fa;
-  --aurora-a: rgba(124, 58, 237, 0.17);  /* violeta */
-  --aurora-b: rgba(34, 211, 238, 0.15);  /* cyan */
-  --aurora-c: rgba(217, 70, 239, 0.13);  /* magenta */
-  --aurora-d: rgba(59, 130, 246, 0.12);  /* azul */
-  --star: rgba(109, 40, 217, 0.32);
-  --star-2: rgba(8, 145, 178, 0.28);
+  --bg: #ffffff;
+  --aurora-a: transparent;
+  --aurora-b: transparent;
+  --aurora-c: transparent;
+  --aurora-d: transparent;
+  --star: transparent;
+  --star-2: transparent;
 
-  --surface: rgba(255, 255, 255, 0.5);
-  --surface-strong: rgba(255, 255, 255, 0.76);
-  --surface-solid: #fbfaff;
-  --surface-input: rgba(255, 255, 255, 0.62);
-  --veil: rgba(255, 255, 255, 0.35);
+  --surface: #ffffff;
+  --surface-strong: #ffffff;
+  --surface-solid: #ffffff;
+  --surface-input: #f8f9fc;
+  --veil: #f5f6fa;
 
-  --border: rgba(35, 30, 65, 0.1);
-  --border-strong: rgba(35, 30, 65, 0.18);
-  --edge-hi: rgba(255, 255, 255, 0.9);
-  --edge-iris-a: rgba(124, 58, 237, 0.22);
-  --edge-iris-b: rgba(34, 211, 238, 0.2);
+  --border: #e6e8f0;
+  --border-strong: #d3d7e4;
+  --edge-hi: rgba(255, 255, 255, 0);
+  --edge-iris-a: rgba(201, 151, 46, 0.5);
+  --edge-iris-b: rgba(30, 58, 138, 0.35);
 
-  --text-1: #17162b;
-  --text-2: #535070;
-  --text-3: #6b6788;           /* subido de #9c99b8: 2.45:1 → 4.6:1 (cabeceras de tabla, metadatos) */
+  --text-1: #131b3a;
+  --text-2: #4b5372;
+  --text-3: #6b7290;
 
-  --shadow-card:
-    0 1px 1px rgba(23, 22, 43, 0.03),
-    0 8px 28px -10px rgba(76, 51, 158, 0.2),
-    0 0 30px -18px var(--accent-glow);
-  --shadow-pop:
-    0 2px 4px rgba(23, 22, 43, 0.06),
-    0 20px 50px -16px rgba(76, 51, 158, 0.32),
-    0 0 40px -14px var(--accent-glow);
+  --shadow-card: 0 1px 2px rgba(19, 27, 58, 0.04), 0 8px 24px -12px rgba(19, 27, 58, 0.12);
+  --shadow-pop: 0 4px 10px rgba(19, 27, 58, 0.06), 0 18px 40px -14px rgba(19, 27, 58, 0.18);
 }
 
 .dark {
-  --accent: #a78bfa;
-  --accent-strong: #8b5cf6;
-  --accent-soft: rgba(167, 139, 250, 0.14);
-  --accent-glow: rgba(139, 92, 246, 0.45);
-  --accent-cyan: #22d3ee;
-  --accent-cyan-soft: rgba(34, 211, 238, 0.14);
-  --accent-magenta: #e879f9;
-  --accent-magenta-soft: rgba(232, 121, 249, 0.14);
-  --danger: #ff6369;
-  --danger-soft: rgba(255, 99, 105, 0.15);
+  --accent: #6d8fee;
+  --accent-strong: #8ea6f2;
+  --accent-soft: rgba(109, 143, 238, 0.14);
+  --accent-glow: rgba(109, 143, 238, 0.4);
+  --accent-cyan: #7fa4ff;
+  --accent-cyan-soft: rgba(127, 164, 255, 0.14);
+  --accent-magenta: #e0b355;
+  --accent-magenta-soft: rgba(224, 179, 85, 0.16);
+  --danger: #ff6b5e;
+  --danger-soft: rgba(255, 107, 94, 0.15);
   --success: #34d399;
   --success-soft: rgba(52, 211, 153, 0.14);
 
-  --bg: #08081a;
-  --aurora-a: rgba(124, 58, 237, 0.26);
-  --aurora-b: rgba(34, 211, 238, 0.16);
-  --aurora-c: rgba(217, 70, 239, 0.18);
-  --aurora-d: rgba(37, 99, 235, 0.16);
-  --star: rgba(255, 255, 255, 0.75);
-  --star-2: rgba(165, 243, 252, 0.6);
+  --bg: #0b1226;
+  --aurora-a: transparent;
+  --aurora-b: transparent;
+  --aurora-c: transparent;
+  --aurora-d: transparent;
+  --star: transparent;
+  --star-2: transparent;
 
-  --surface: rgba(24, 22, 52, 0.52);
-  --surface-strong: rgba(31, 28, 64, 0.78);
-  --surface-solid: #16142e;
-  --surface-input: rgba(14, 13, 34, 0.62);
+  --surface: #131b34;
+  --surface-strong: #17203e;
+  --surface-solid: #101830;
+  --surface-input: #101830;
   --veil: rgba(255, 255, 255, 0.045);
 
-  --border: rgba(167, 139, 250, 0.14);
-  --border-strong: rgba(167, 139, 250, 0.28);
-  --edge-hi: rgba(220, 210, 255, 0.16);
-  --edge-iris-a: rgba(167, 139, 250, 0.35);
-  --edge-iris-b: rgba(34, 211, 238, 0.3);
+  --border: rgba(142, 166, 242, 0.18);
+  --border-strong: rgba(142, 166, 242, 0.32);
+  --edge-hi: rgba(255, 255, 255, 0);
+  --edge-iris-a: rgba(224, 179, 85, 0.3);
+  --edge-iris-b: rgba(109, 143, 238, 0.32);
 
-  --text-1: #f2f1fc;
-  --text-2: #aca8cc;
-  --text-3: #676285;
+  --text-1: #f3f5fc;
+  --text-2: #b7bfdc;
+  --text-3: #8890b3;
 
-  --shadow-card:
-    0 1px 1px rgba(0, 0, 0, 0.35),
-    0 10px 32px -10px rgba(0, 0, 10, 0.6),
-    0 0 34px -14px var(--accent-glow);
-  --shadow-pop:
-    0 2px 6px rgba(0, 0, 0, 0.45),
-    0 24px 60px -16px rgba(0, 0, 10, 0.75),
-    0 0 48px -12px var(--accent-glow);
+  --shadow-card: 0 1px 1px rgba(0, 0, 0, 0.35), 0 10px 28px -10px rgba(0, 0, 5, 0.55);
+  --shadow-pop: 0 2px 6px rgba(0, 0, 0, 0.4), 0 22px 50px -16px rgba(0, 0, 5, 0.6);
 }
 
 @theme inline {
@@ -128,89 +116,30 @@ body {
   transition: background 0.4s ease;
 }
 
-/* Nebulosa líquida de fondo */
-body::before {
-  content: "";
-  position: fixed;
-  inset: -20%;
-  z-index: -2;
-  background:
-    radial-gradient(40% 36% at 10% 6%, var(--aurora-a), transparent 70%),
-    radial-gradient(48% 42% at 90% 10%, var(--aurora-b), transparent 70%),
-    radial-gradient(44% 50% at 78% 95%, var(--aurora-c), transparent 72%),
-    radial-gradient(38% 44% at 18% 90%, var(--aurora-d), transparent 72%);
-  filter: blur(30px);
-  animation: aurora-drift 28s ease-in-out infinite alternate;
-}
-
-/* Campo de estrellas + grano fino */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image:
-    radial-gradient(1.5px 1.5px at 12% 22%, var(--star), transparent 55%),
-    radial-gradient(1px 1px at 34% 8%, var(--star-2), transparent 55%),
-    radial-gradient(1.8px 1.8px at 57% 31%, var(--star), transparent 55%),
-    radial-gradient(1px 1px at 73% 12%, var(--star-2), transparent 55%),
-    radial-gradient(1.3px 1.3px at 88% 42%, var(--star), transparent 55%),
-    radial-gradient(1px 1px at 8% 61%, var(--star-2), transparent 55%),
-    radial-gradient(1.6px 1.6px at 27% 83%, var(--star), transparent 55%),
-    radial-gradient(1px 1px at 49% 66%, var(--star-2), transparent 55%),
-    radial-gradient(1.4px 1.4px at 68% 89%, var(--star), transparent 55%),
-    radial-gradient(1px 1px at 92% 74%, var(--star-2), transparent 55%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size:
-    420px 420px, 420px 420px, 420px 420px, 420px 420px, 420px 420px,
-    420px 420px, 420px 420px, 420px 420px, 420px 420px, 420px 420px,
-    160px 160px;
-}
-
-@keyframes aurora-drift {
-  from {
-    transform: translate3d(-2%, -1%, 0) scale(1);
-  }
-  to {
-    transform: translate3d(2%, 3%, 0) scale(1.08);
-  }
-}
-
 /* ── Tipografía display ── */
 .font-display {
   font-family: var(--font-display), var(--font-body), sans-serif;
   letter-spacing: -0.02em;
 }
 
-/* ── Vidrio espacial ── */
+/* ── Tarjetas: limpias, blancas, sombra suave — nada de vidrio/blur ── */
 .glass {
   position: relative;
-  background: var(--surface);
-  -webkit-backdrop-filter: blur(28px) saturate(1.8);
-  backdrop-filter: blur(28px) saturate(1.8);
+  background: var(--surface-solid);
   border: 1px solid var(--border);
-  box-shadow:
-    var(--shadow-card),
-    inset 0 1px 0 var(--edge-hi),
-    inset 0 0 24px -14px var(--edge-iris-a);
-  border-radius: 1.25rem;
+  box-shadow: var(--shadow-card);
+  border-radius: 1.1rem;
 }
 
 .glass-strong {
   position: relative;
-  background: var(--surface-strong);
-  -webkit-backdrop-filter: blur(34px) saturate(1.9);
-  backdrop-filter: blur(34px) saturate(1.9);
+  background: var(--surface-solid);
   border: 1px solid var(--border);
-  box-shadow:
-    var(--shadow-pop),
-    inset 0 1px 0 var(--edge-hi),
-    inset 0 0 30px -14px var(--edge-iris-b);
-  border-radius: 1.5rem;
+  box-shadow: var(--shadow-pop);
+  border-radius: 1.35rem;
 }
 
-/* Filo iridiscente superior (borde de nebulosa) */
+/* Filo dorado sutil arriba — el único "destello" permitido, discreto. */
 .glass::before,
 .glass-strong::before {
   content: "";
@@ -219,13 +148,8 @@ body::after {
   border-radius: inherit;
   pointer-events: none;
   padding: 1px;
-  background: linear-gradient(
-    120deg,
-    var(--edge-iris-a),
-    transparent 30%,
-    transparent 70%,
-    var(--edge-iris-b)
-  );
+  background: linear-gradient(120deg, var(--edge-iris-a), transparent 24%, transparent 76%, var(--edge-iris-b));
+  opacity: 0.5;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -234,96 +158,86 @@ body::after {
 
 .glass-hover {
   transition:
-    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 0.25s ease,
-    border-color 0.25s ease,
-    background 0.25s ease;
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 .glass-hover:hover {
   transform: translateY(-2px);
   border-color: var(--border-strong);
-  box-shadow:
-    var(--shadow-pop),
-    inset 0 1px 0 var(--edge-hi),
-    inset 0 0 30px -12px var(--edge-iris-a);
-  background: var(--surface-strong);
+  box-shadow: var(--shadow-pop);
 }
 
 /* ── Controles ── */
 .input-glass {
   background: var(--surface-input);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
   border: 1px solid var(--border);
-  border-radius: 0.9rem;
+  border-radius: 0.75rem;
   color: var(--text-1);
-  font-size: 1rem; /* >=16px: sin auto-zoom iOS */
+  font-size: 1rem;
   padding: 0.6rem 0.9rem;
   outline: none;
-  box-shadow: inset 0 1px 2px rgba(23, 22, 43, 0.04);
   transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
 }
 .input-glass::placeholder {
   color: var(--text-3);
 }
 .input-glass:focus {
   border-color: var(--accent);
-  box-shadow:
-    0 0 0 3px var(--accent-soft),
-    0 0 18px -6px var(--accent-glow);
+  background: var(--surface-solid);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
+/* Botón principal: azul rey sólido, alto contraste, sombra propia — "que se note". */
 .btn-accent {
-  background: linear-gradient(135deg, var(--accent), var(--accent-magenta));
-  color: #fff;
-  font-weight: 600;
-  border-radius: 0.9rem;
-  padding: 0.6rem 1.15rem;
+  background: var(--accent);
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  padding: 0.7rem 1.3rem;
   font-size: 1rem;
-  box-shadow:
-    0 8px 22px -6px var(--accent-glow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 16px -4px var(--accent-glow);
+  border: 1px solid var(--accent-strong);
   transition:
     transform 0.15s ease,
     box-shadow 0.2s ease,
-    filter 0.2s ease;
+    background 0.2s ease;
 }
 .btn-accent:hover {
-  filter: brightness(1.08);
+  background: var(--accent-strong);
   transform: translateY(-1px);
   box-shadow:
-    0 12px 30px -6px var(--accent-glow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    0 10px 22px -4px var(--accent-glow),
+    0 0 0 3px var(--accent-magenta-soft);
 }
 .btn-accent:active {
   transform: translateY(0);
 }
 .btn-accent:disabled {
-  opacity: 0.55;
+  opacity: 0.5;
   transform: none;
+  box-shadow: none;
 }
 
 .btn-ghost {
-  border: 1px solid var(--border);
-  border-radius: 0.9rem;
-  padding: 0.55rem 1rem;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 0.75rem;
+  padding: 0.65rem 1.1rem;
   color: var(--text-2);
-  background: var(--veil);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background: var(--surface-solid);
+  font-weight: 600;
   transition:
-    color 0.2s ease,
-    border-color 0.2s ease,
-    background 0.2s ease,
-    box-shadow 0.2s ease;
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease;
 }
 .btn-ghost:hover {
-  color: var(--text-1);
-  border-color: var(--border-strong);
-  background: var(--surface-strong);
-  box-shadow: 0 0 18px -8px var(--accent-glow);
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .chip {
@@ -331,14 +245,16 @@ body::after {
   align-items: center;
   gap: 0.3rem;
   border-radius: 999px;
-  padding: 0.15rem 0.65rem;
+  padding: 0.2rem 0.7rem;
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.01em;
-  border: 1px solid transparent;
+  border: 1px solid var(--border);
+  background: var(--veil);
+  color: var(--text-2);
 }
 
-/* ── Tablas de vidrio ── */
+/* ── Tablas ── */
 .table-glass {
   width: 100%;
   font-size: 0.875rem;
@@ -350,13 +266,11 @@ body::after {
   font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-3);
   padding: 0.8rem 1rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface-strong);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  border-bottom: 1.5px solid var(--border);
+  background: var(--veil);
 }
 .table-glass tbody td {
   padding: 0.8rem 1rem;
@@ -366,7 +280,7 @@ body::after {
   transition: background 0.15s ease;
 }
 .table-glass tbody tr:hover {
-  background: var(--veil);
+  background: var(--accent-soft);
 }
 .table-glass tbody tr:last-child td {
   border-bottom: none;
@@ -378,35 +292,32 @@ body::after {
   align-items: center;
   gap: 0.7rem;
   padding: 0.6rem 0.85rem;
-  border-radius: 0.85rem;
+  border-radius: 0.7rem;
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-2);
   border: 1px solid transparent;
   transition:
-    color 0.18s ease,
-    background 0.18s ease,
-    border-color 0.18s ease,
-    box-shadow 0.18s ease;
+    color 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease;
   white-space: nowrap;
 }
 .nav-item:hover {
-  color: var(--text-1);
-  background: var(--veil);
+  color: var(--accent);
+  background: var(--accent-soft);
 }
 .nav-item[data-active="true"] {
-  color: #fff;
-  background: linear-gradient(135deg, var(--accent), var(--accent-magenta));
-  box-shadow:
-    0 8px 22px -6px var(--accent-glow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  background: var(--accent);
+  box-shadow: 0 4px 12px -4px var(--accent-glow);
 }
 
 /* ── Entrada escalonada ── */
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -415,14 +326,11 @@ body::after {
 }
 .rise {
   opacity: 0;
-  animation: rise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  animation-delay: calc(var(--i, 0) * 70ms);
+  animation: rise 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 60ms);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body::before {
-    animation: none;
-  }
   .rise {
     animation-duration: 0.01ms;
     animation-delay: 0ms;
@@ -456,235 +364,36 @@ button:not(:disabled) {
   background: transparent;
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   MODO FLOW — una tarjeta a la vez, con acompañamiento visual.
-   Todo el movimiento vive aquí para que el modo se sienta nativo de
-   Axis (mismos tokens, mismas curvas) y para poder apagarlo entero
-   con prefers-reduced-motion al final del bloque.
-   ══════════════════════════════════════════════════════════════════ */
-
-/* Entrada de tarjeta — hacia adelante (lead nuevo) */
-@keyframes flow-in {
-  from {
-    opacity: 0;
-    transform: translateX(38px) scale(0.985);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-}
-.flow-in {
-  animation: flow-in 0.38s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-/* Entrada de tarjeta — hacia atrás (revisitando a alguien ya atendido) */
-@keyframes flow-back {
-  from {
-    opacity: 0;
-    transform: translateX(-38px) scale(0.985);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-}
-.flow-back {
-  animation: flow-back 0.38s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-/* Golpe de éxito: el destello verde que confirma que SÍ se guardó */
-@keyframes flow-exito {
-  0% {
-    box-shadow: 0 0 0 0 var(--success-soft);
-  }
-  40% {
-    box-shadow: 0 0 0 14px transparent;
-  }
-  100% {
-    box-shadow: 0 0 0 0 transparent;
-  }
-}
-.flow-exito {
-  animation: flow-exito 0.7s ease-out;
-  border-color: var(--success) !important;
-}
-
-/* Error: sacudida corta — el vendedor DEBE notar que no se guardó */
-@keyframes flow-error {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  20% {
-    transform: translateX(-7px);
-  }
-  40% {
-    transform: translateX(6px);
-  }
-  60% {
-    transform: translateX(-4px);
-  }
-  80% {
-    transform: translateX(2px);
-  }
-}
-.flow-error {
-  animation: flow-error 0.42s ease-in-out;
-}
-
-/* Contador que sube: pequeño salto para que el número se sienta ganado */
-@keyframes flow-pop {
-  0% {
-    transform: scale(1);
-  }
-  45% {
-    transform: scale(1.32);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-.flow-pop {
-  animation: flow-pop 0.42s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-/* Racha encendida: la llama respira mientras la racha viva */
-@keyframes flow-racha {
-  0%,
-  100% {
-    transform: scale(1) rotate(-3deg);
-    filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.5));
-  }
-  50% {
-    transform: scale(1.14) rotate(3deg);
-    filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.85));
-  }
-}
-.flow-racha {
-  animation: flow-racha 1.5s ease-in-out infinite;
-}
-
-/* Confeti de hito — partículas puras en CSS, sin librerías */
-@keyframes flow-confeti {
-  0% {
-    opacity: 1;
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(0.35);
-  }
-}
-.flow-confeti span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 9px;
-  height: 9px;
-  border-radius: 2px;
-  animation: flow-confeti 1.15s cubic-bezier(0.15, 0.7, 0.35, 1) forwards;
-}
-
-/* Medalla de hito: entra girando y se asienta */
-@keyframes flow-hito {
-  0% {
-    opacity: 0;
-    transform: scale(0.4) rotate(-14deg);
-  }
-  55% {
-    opacity: 1;
-    transform: scale(1.1) rotate(4deg);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-  }
-}
-.flow-hito {
-  animation: flow-hito 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-/* Aro de progreso: se rellena solo al cambiar el ángulo */
-.flow-aro {
-  transition: stroke-dashoffset 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-/* Aviso flotante (se guardó / falló) */
-@keyframes flow-aviso {
-  0% {
-    opacity: 0;
-    transform: translateY(12px) scale(0.96);
-  }
-  12%,
-  82% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.98);
-  }
-}
-.flow-aviso {
-  animation: flow-aviso 2.4s ease-in-out forwards;
-}
-
-/* Latido suave: para el botón principal cuando lleva rato sin acción */
-@keyframes flow-latido {
-  0%,
-  100% {
-    box-shadow: 0 8px 22px -6px var(--accent-glow);
-  }
-  50% {
-    box-shadow:
-      0 8px 30px -4px var(--accent-glow),
-      0 0 0 6px var(--accent-soft);
-  }
-}
-.flow-latido {
-  animation: flow-latido 2.2s ease-in-out infinite;
-}
-
-/* Modo inmersivo: la pantalla completa del flow */
-.flow-lienzo {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  overflow-y: auto;
-  background: var(--bg);
-  background-image:
-    radial-gradient(1100px 560px at 12% -8%, var(--accent-soft), transparent 62%),
-    radial-gradient(900px 480px at 92% 108%, var(--accent-magenta-soft), transparent 60%);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .flow-in,
-  .flow-back,
-  .flow-exito,
-  .flow-error,
-  .flow-pop,
-  .flow-hito,
-  .flow-aviso {
-    animation-duration: 0.01ms;
-    animation-iteration-count: 1;
-  }
-  .flow-racha,
-  .flow-latido {
-    animation: none;
-  }
-  .flow-confeti {
-    display: none;
-  }
-  .flow-aro {
-    transition: none;
-  }
-}
-
-/* ── Foco visible ──
-   No había NINGUNA regla de foco y 11 controles hacían `outline-none` sin
-   reemplazo: navegar la tabla con teclado era navegar a ciegas. (24-ago) */
+/* ── Foco visible ── */
 :where(button, a, select, input, textarea, [tabindex]):focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+/* ── Éxito/error de formularios (reuso simple, sin la coreografía de "flow" de Axis) ── */
+@keyframes flow-error {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+.flow-error {
+  animation: flow-error 0.4s ease-in-out;
+}
+
+@keyframes flow-pop {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
+.flow-pop {
+  animation: flow-pop 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-error,
+  .flow-pop {
+    animation-duration: 0.01ms;
+  }
 }
