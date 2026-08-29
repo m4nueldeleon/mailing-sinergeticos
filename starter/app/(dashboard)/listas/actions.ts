@@ -7,6 +7,7 @@ import { contarSegmento, listarSegmento, type ContactoAxis, type FiltrosSegmento
 function leerFiltros(formData: FormData): FiltrosSegmento {
   const etapas = formData.getAll("etapas").map(String) as FiltrosSegmento["etapas"];
   const mercados = formData.getAll("mercados").map(String) as FiltrosSegmento["mercados"];
+  const nivelConsciencia = formData.getAll("nivelConsciencia").map(String) as FiltrosSegmento["nivelConsciencia"];
   const paisesRaw = String(formData.get("paises") ?? "").trim();
   const membresia = String(formData.get("membresia") ?? "") as FiltrosSegmento["membresia"];
   const activosRaw = String(formData.get("activosEnDias") ?? "").trim();
@@ -14,6 +15,7 @@ function leerFiltros(formData: FormData): FiltrosSegmento {
   return {
     etapas: etapas && etapas.length > 0 ? etapas : undefined,
     mercados: mercados && mercados.length > 0 ? mercados : undefined,
+    nivelConsciencia: nivelConsciencia && nivelConsciencia.length > 0 ? nivelConsciencia : undefined,
     paises: paisesRaw ? paisesRaw.split(",").map((p) => p.trim()).filter(Boolean) : undefined,
     membresia: membresia || undefined,
     activosEnDias: activosRaw ? Number(activosRaw) : undefined,

@@ -7,6 +7,7 @@ import {
   type EstadoPrevia,
   type EstadoGuardar,
 } from "./actions";
+import { NIVEL_LABEL, EXCLUSION_BAJAS_ACTIVA, type NivelConsciencia } from "@/lib/axis-types";
 
 const ESTADO_PREVIA: EstadoPrevia = { ok: false, error: null, total: null, muestra: [], filtros: null };
 const ESTADO_GUARDAR: EstadoGuardar = { ok: false, error: null };
@@ -24,6 +25,10 @@ const MERCADOS = [
   { value: "mexico", label: "México" },
   { value: "latam", label: "Latam" },
 ] as const;
+
+const NIVELES: { value: NivelConsciencia; label: string }[] = (
+  Object.entries(NIVEL_LABEL) as [NivelConsciencia, string][]
+).map(([value, label]) => ({ value, label }));
 
 export function SegmentosPanel() {
   const [previa, previsualizarAction, calculando] = useActionState(previsualizarSegmento, ESTADO_PREVIA);
@@ -54,6 +59,16 @@ export function SegmentosPanel() {
             <label key={m.value} className="chip cursor-pointer border-[var(--border)] bg-[var(--veil)] has-[:checked]:border-[var(--accent)] has-[:checked]:bg-[var(--accent-soft)]">
               <input type="checkbox" name="mercados" value={m.value} className="sr-only" />
               {m.label}
+            </label>
+          ))}
+        </fieldset>
+
+        <fieldset className="flex flex-wrap gap-2">
+          <legend className="mb-2 w-full text-sm font-medium text-[var(--text-2)]">Nivel de consciencia</legend>
+          {NIVELES.map((n) => (
+            <label key={n.value} className="chip cursor-pointer border-[var(--border)] bg-[var(--veil)] has-[:checked]:border-[var(--accent)] has-[:checked]:bg-[var(--accent-soft)]">
+              <input type="checkbox" name="nivelConsciencia" value={n.value} className="sr-only" />
+              {n.label}
             </label>
           ))}
         </fieldset>
@@ -92,6 +107,12 @@ export function SegmentosPanel() {
 
       {previa.ok ? (
         <section className="glass rise space-y-4 p-6">
+          {!EXCLUSION_BAJAS_ACTIVA ? (
+            <p className="rounded-xl border border-[var(--danger)] bg-[var(--danger-soft)] px-4 py-3 text-sm text-[var(--danger)]">
+              ⚠️ La exclusión de bajas (mail_supresion) todavía no funciona — falta un permiso pendiente con Manuel/David.
+              Esta vista previa puede incluir gente que ya se dio de baja. No mandes nada real todavía.
+            </p>
+          ) : null}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="font-display text-lg font-semibold">
@@ -124,6 +145,8 @@ export function SegmentosPanel() {
                 <th>Correo</th>
                 <th>País</th>
                 <th>Etapa</th>
+                <th>Nivel de consciencia</th>
+                <th>Puntaje</th>
               </tr>
             </thead>
             <tbody>
@@ -133,11 +156,13 @@ export function SegmentosPanel() {
                   <td>{c.email}</td>
                   <td>{c.country || "—"}</td>
                   <td className="capitalize">{c.lifecycle_stage}</td>
+                  <td>{NIVEL_LABEL[c.nivelConsciencia]}</td>
+                  <td>{c.puntaje}</td>
                 </tr>
               ))}
               {previa.muestra.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="text-center text-[var(--text-3)]">
+                  <td colSpan={6} className="text-center text-[var(--text-3)]">
                     Sin contactos con estos filtros.
                   </td>
                 </tr>
