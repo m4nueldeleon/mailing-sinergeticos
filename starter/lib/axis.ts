@@ -1,5 +1,6 @@
 import postgres from "postgres";
 import { env } from "./env";
+import { EXCLUSION_BAJAS_ACTIVA } from "./axis-types";
 import type { Etapa, Mercado, NivelConsciencia } from "./axis-types";
 
 export type { Etapa, Mercado, NivelConsciencia } from "./axis-types";
@@ -95,6 +96,7 @@ export async function listarSegmento(f: FiltrosSegmento, limite = 1000, offset =
       ${f.membresia ? sql`and c.membresia = ${f.membresia}` : sql``}
       ${f.activosEnDias ? sql`and c.last_activity_at >= now() - make_interval(days => ${f.activosEnDias})` : sql``}
       ${f.nivelConsciencia?.length ? sql`and (${sql.unsafe(NIVEL_SQL)}) = any(${f.nivelConsciencia})` : sql``}
+      ${EXCLUSION_BAJAS_ACTIVA ? sql`and c.email_normalized not in (select email from mail_supresion)` : sql``}
     order by puntaje desc, c.last_activity_at desc nulls last
     limit ${limite} offset ${offset}
   `;
@@ -113,6 +115,7 @@ export async function contarSegmento(f: FiltrosSegmento): Promise<number> {
       ${f.membresia ? sql`and c.membresia = ${f.membresia}` : sql``}
       ${f.activosEnDias ? sql`and c.last_activity_at >= now() - make_interval(days => ${f.activosEnDias})` : sql``}
       ${f.nivelConsciencia?.length ? sql`and (${sql.unsafe(NIVEL_SQL)}) = any(${f.nivelConsciencia})` : sql``}
+      ${EXCLUSION_BAJAS_ACTIVA ? sql`and c.email_normalized not in (select email from mail_supresion)` : sql``}
   `;
   return fila?.n ?? 0;
 }

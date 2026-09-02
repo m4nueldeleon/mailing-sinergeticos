@@ -15,9 +15,8 @@ export const NIVEL_LABEL: Record<NivelConsciencia, string> = {
 };
 
 /**
- * La exclusión de `mail_supresion` está DESACTIVADA a propósito: esa tabla hoy devuelve 0
- * filas para el rol lector (falta su RLS policy — pendiente urgente con Manuel/David), así
- * que el `not in` que había antes nunca excluía a nadie de verdad — mentía que sí. Se quita
- * hasta que la policy exista.
+ * Verificado 2-sep-2026: la policy de `mail_supresion` para el rol lector ya existe
+ * (idéntica a `contacts`/`memberships`, RLS sin restricción) — el 0 que devolvía antes
+ * era la tabla vacía de verdad, no un bloqueo de permisos. Exclusión reactivada.
  */
-export const EXCLUSION_BAJAS_ACTIVA = false;
+export const EXCLUSION_BAJAS_ACTIVA = true;
