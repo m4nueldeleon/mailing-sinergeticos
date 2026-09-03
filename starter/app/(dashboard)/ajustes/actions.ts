@@ -1,8 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth";
+import { requireAdmin, requireUser } from "@/lib/auth";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
+import { env } from "@/lib/env";
 import type { Rol } from "@/lib/auth";
 
 /**
@@ -62,4 +63,89 @@ export async function cambiarRol(_prev: EstadoAjustes, formData: FormData): Prom
 
   revalidatePath("/ajustes");
   return { ok: true, error: null };
+}
+
+export interface EstadoConfiguracion {
+  mailEnabled: boolean;
+  dailyCap: number;
+  mailFrom: string;
+  mailReplyTo: string;
+  configurado: {
+    resend: boolean;
+    from: boolean;
+    webhook: boolean;
+    axis: boolean;
+    db: boolean;
+    unsubscribe: boolean;
+  };
+}
+
+export async function obtenerEstadoConfiguracion(): Promise<EstadoConfiguracion> {
+  await requireUser();
+  return {
+    mailEnabled: env.mailEnabled(),
+    dailyCap: env.mailDailyCap(),
+    mailFrom: env.mailFrom(),
+    mailReplyTo: env.mailReplyTo() ?? "",
+    configurado: {
+      resend: Boolean(env.resendApiKey()),
+      from: Boolean(env.mailFrom()),
+      webhook: Boolean(env.resendWebhookSecret()),
+      axis: Boolean(env.axisDatabaseUrlRo()),
+      db: Boolean(env.databaseUrl()),
+      unsubscribe: Boolean(env.unsubscribeSecret()),
+    },
+  };
+}
+
+export interface DominioResend {
+  name: string;
+  status: string;
+}
+
+/** Verificación de dominios en Resend — sin esto, un dominio sin verificar entrega peor o nada. */
+export async function obtenerDominiosResend(): Promise<{ ok: boolean; error: string | null; dominios: DominioResend[] }> {
+  await requireUser();
+  const apiKey = env.resendApiKey();
+  if (!apiKey) return { ok: false, error: "Falta RESEND_API_KEY", dominios: [] };
+
+  const res = await fetch("https://api.resend.com/domains", { headers: { Authorization: `Bearer ${apiKey}` } });
+  if (!res.ok) return { ok: false, error: `Resend respondió ${res.status}`, dominios: [] };
+  const data = (await res.json()) as { data?: { name: string; status: string }[] };
+  return { ok: true, error: null, dominios: (data.data ?? []).map((d) => ({ name: d.name, status: d.status })) };
+}
+
+export interface EntradaBitacora {
+  id: number;
+  action: string;
+  entity: string | null;
+  entity_id: string | null;
+  detail: Record<string, unknown>;
+  created_at: string;
+  usuario_email: string | null;
+}
+
+export async function listarBitacora(): Promise<EntradaBitacora[]> {
+  await requireAdmin();
+  const admin = await createSupabaseAdmin();
+  const { data } = await admin
+    .from("audit_log")
+    .select("id, action, entity, entity_id, detail, created_at, user_id")
+    .order("created_at", { ascending: false })
+    .limit(50);
+  const filas = (data ?? []) as { id: number; action: string; entity: string | null; entity_id: string | null; detail: Record<string, unknown>; created_at: string; user_id: string | null }[];
+
+  const userIds = [...new Set(filas.map((f) => f.user_id).filter(Boolean))] as string[];
+  const { data: usuarios } = userIds.length > 0 ? await admin.from("app_users").select("id, email").in("id", userIds) : { data: [] };
+  const emailPorId = new Map((usuarios ?? []).map((u) => [u.id as string, u.email as string]));
+
+  return filas.map((f) => ({
+    id: f.id,
+    action: f.action,
+    entity: f.entity,
+    entity_id: f.entity_id,
+    detail: f.detail,
+    created_at: f.created_at,
+    usuario_email: f.user_id ? (emailPorId.get(f.user_id) ?? null) : null,
+  }));
 }

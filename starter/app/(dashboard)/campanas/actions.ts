@@ -8,6 +8,7 @@ import { ensamblarCorreo, renderTextoPlano, renderVariables, textoDesdeHtml, typ
 import { enviarLote } from "@/lib/resend";
 import { urlBaja } from "@/lib/baja";
 import { congelarDestinatarios, procesarSiguienteLote } from "@/lib/campanas";
+import { registrarAuditoria } from "@/lib/auditoria";
 
 /** campaigns/campaign_recipients/campaign_sends tienen RLS sin policies: siempre service_role, detrás de requireUser(). */
 
@@ -185,7 +186,13 @@ export interface EstadoAccionCampana {
   error: string | null;
 }
 
-async function transicion(id: string, desde: EstadoCampana[], hasta: EstadoCampana, extra?: Record<string, unknown>): Promise<EstadoAccionCampana> {
+async function transicion(
+  id: string,
+  desde: EstadoCampana[],
+  hasta: EstadoCampana,
+  extra?: Record<string, unknown>,
+  bitacora?: { userId: string; action: string },
+): Promise<EstadoAccionCampana> {
   const admin = await createSupabaseAdmin();
   const { data: actual } = await admin.from("campaigns").select("status").eq("id", id).maybeSingle();
   if (!actual) return { ok: false, error: "Campaña no encontrada." };
@@ -194,6 +201,7 @@ async function transicion(id: string, desde: EstadoCampana[], hasta: EstadoCampa
   }
   const { error } = await admin.from("campaigns").update({ status: hasta, updated_at: new Date().toISOString(), ...extra }).eq("id", id);
   if (error) return { ok: false, error: error.message };
+  if (bitacora) await registrarAuditoria(admin, bitacora.userId, bitacora.action, "campaign", id);
   revalidatePath(`/campanas/${id}`);
   revalidatePath("/campanas");
   return { ok: true, error: null };
@@ -220,7 +228,7 @@ export async function aprobarCampana(id: string): Promise<EstadoAccionCampana> {
   const { data: campana } = await admin.from("campaigns").select("created_by, status").eq("id", id).maybeSingle();
   if (!campana) return { ok: false, error: "Campaña no encontrada." };
   if (campana.created_by === yo.id) return { ok: false, error: "Quien crea la campaña no puede aprobarla — pide que la revise alguien más." };
-  return transicion(id, ["en_revision"], "aprobada", { approved_by: yo.id, approved_at: new Date().toISOString() });
+  return transicion(id, ["en_revision"], "aprobada", { approved_by: yo.id, approved_at: new Date().toISOString() }, { userId: yo.id, action: "campaign.approve" });
 }
 
 /**
@@ -228,7 +236,7 @@ export async function aprobarCampana(id: string): Promise<EstadoAccionCampana> {
  * y, si es "ahora", dispara el primer lote de una vez — el cron se encarga del resto.
  */
 export async function programarOEnviar(_prev: EstadoAccionCampana, formData: FormData): Promise<EstadoAccionCampana> {
-  await requireUser();
+  const yo = await requireUser();
   const id = String(formData.get("id") ?? "").trim();
   const cuando = String(formData.get("cuando") ?? "ahora"); // "ahora" | fecha ISO
 
@@ -242,12 +250,14 @@ export async function programarOEnviar(_prev: EstadoAccionCampana, formData: For
 
   if (cuando === "ahora") {
     await admin.from("campaigns").update({ status: "enviando", started_at: new Date().toISOString(), scheduled_for: new Date().toISOString() }).eq("id", id);
+    await registrarAuditoria(admin, yo.id, "campaign.send_now", "campaign", id, { recipients: congelado.total });
     // Dispara el primer lote de una vez — no hace falta esperar al cron para que arranque.
     await procesarSiguienteLote(admin, id);
   } else {
     const fecha = new Date(cuando);
     if (Number.isNaN(fecha.getTime())) return { ok: false, error: "Fecha de programación inválida." };
     await admin.from("campaigns").update({ status: "programada", scheduled_for: fecha.toISOString() }).eq("id", id);
+    await registrarAuditoria(admin, yo.id, "campaign.schedule", "campaign", id, { recipients: congelado.total, scheduled_for: fecha.toISOString() });
   }
 
   revalidatePath(`/campanas/${id}`);
@@ -256,16 +266,19 @@ export async function programarOEnviar(_prev: EstadoAccionCampana, formData: For
 }
 
 export async function pausarCampana(id: string): Promise<EstadoAccionCampana> {
-  await requireUser();
-  return transicion(id, ["enviando", "programada"], "pausada");
+  const yo = await requireUser();
+  return transicion(id, ["enviando", "programada"], "pausada", undefined, { userId: yo.id, action: "campaign.pause" });
 }
 
 export async function reanudarCampana(id: string): Promise<EstadoAccionCampana> {
-  await requireUser();
-  return transicion(id, ["pausada"], "enviando");
+  const yo = await requireUser();
+  return transicion(id, ["pausada"], "enviando", undefined, { userId: yo.id, action: "campaign.resume" });
 }
 
 export async function cancelarCampana(id: string): Promise<EstadoAccionCampana> {
-  await requireUser();
-  return transicion(id, ["borrador", "en_revision", "aprobada", "programada", "enviando", "pausada"], "cancelada");
+  const yo = await requireUser();
+  return transicion(id, ["borrador", "en_revision", "aprobada", "programada", "enviando", "pausada"], "cancelada", undefined, {
+    userId: yo.id,
+    action: "campaign.cancel",
+  });
 }
