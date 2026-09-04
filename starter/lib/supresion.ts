@@ -1,39 +1,29 @@
-import postgres from "postgres";
-import { env } from "./env";
+import { createSupabaseAdmin } from "./supabase/server";
 
 /**
- * Supresión PROPIA de la app (tabla `suppression` de esquema/mailing-propuesto.sql).
- * Sin DATABASE_URL solo deja constancia en consola: así el starter arranca sin base.
- * Pendiente (docs/03): sincronizar cada alta a mail_supresion de Axis.
+ * Supresión PROPIA de la app y bitácora de eventos de correo (`suppression`,
+ * `mail_events` de esquema/mailing-propuesto.sql).
+ *
+ * Antes esto vivía detrás de DATABASE_URL (conexión directa) y se quedaba
+ * en silencio sin ella — pero todo lo que hace aquí (insertar 2 filas) ya lo
+ * puede hacer perfectamente el cliente de Supabase con service_role, que sí
+ * está configurado desde el día uno. Un webhook no debería depender de una
+ * variable de entorno extra que nadie más usa.
  */
 export type MotivoSupresion = "baja" | "rebote_duro" | "rebote_suave_x3" | "queja" | "manual" | "axis";
 
-let _sql: ReturnType<typeof postgres> | null = null;
-function db() {
-  const url = env.databaseUrl();
-  if (!url) return null;
-  return (_sql ??= postgres(url, { max: 3, ssl: "require", prepare: false }));
-}
-
 export async function agregarSupresion(email: string, motivo: MotivoSupresion, campaignId?: string): Promise<void> {
   const e = email.toLowerCase().trim();
-  const sql = db();
-  if (!sql) {
-    console.warn(`[supresion] sin DATABASE_URL: ${e} (${motivo}) NO se guardó`);
-    return;
-  }
-  await sql`
-    insert into suppression (email, reason, campaign_id)
-    values (${e}, ${motivo}, ${campaignId ?? null})
-    on conflict (email) do nothing
-  `;
+  const admin = await createSupabaseAdmin();
+  const { error } = await admin.from("suppression").upsert(
+    { email: e, reason: motivo, campaign_id: campaignId ?? null },
+    { onConflict: "email", ignoreDuplicates: true },
+  );
+  if (error) console.error("[supresion] no se pudo guardar", { email: e, motivo, error: error.message });
 }
 
 export async function registrarEvento(providerId: string, tipo: string, payload: unknown): Promise<void> {
-  const sql = db();
-  if (!sql) {
-    console.warn(`[evento] sin DATABASE_URL: ${tipo} ${providerId}`);
-    return;
-  }
-  await sql`insert into mail_events (provider_id, type, payload) values (${providerId}, ${tipo}, ${sql.json(payload as never)})`;
+  const admin = await createSupabaseAdmin();
+  const { error } = await admin.from("mail_events").insert({ provider_id: providerId, type: tipo, payload });
+  if (error) console.error("[evento] no se pudo guardar", { providerId, tipo, error: error.message });
 }

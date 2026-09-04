@@ -3,6 +3,7 @@ import { listarSegmento, type FiltrosSegmento } from "./axis";
 import { renderVariables } from "./plantillas";
 import { urlBaja, cabecerasBaja } from "./baja";
 import { enviarLote, trocear, type CorreoLote } from "./resend";
+import { agregarUTM } from "./utm";
 import { env } from "./env";
 
 /**
@@ -141,10 +142,12 @@ export async function procesarSiguienteLote(admin: SupabaseClient, campaignId: s
 
   const { data: campana } = await admin
     .from("campaigns")
-    .select("subject, html, text_body, from_email, reply_to, totals")
+    .select("name, subject, html, text_body, from_email, reply_to, totals")
     .eq("id", campaignId)
     .maybeSingle();
   if (!campana) return { ok: false, error: "Campaña no encontrada.", terminada: false, enviadosEnEsteLote: 0 };
+
+  const htmlEtiquetado = agregarUTM(campana.html as string, campaignId, campana.name as string);
 
   const { data: yaEnviados } = await admin.from("campaign_sends").select("email").eq("campaign_id", campaignId);
   const setEnviados = new Set((yaEnviados ?? []).map((r) => r.email as string));
@@ -175,7 +178,7 @@ export async function procesarSiguienteLote(admin: SupabaseClient, campaignId: s
       email,
       to: email,
       subject: renderVariables(campana.subject as string, vars),
-      html: renderVariables(campana.html as string, vars),
+      html: renderVariables(htmlEtiquetado, vars),
       text: campana.text_body ? renderVariables(campana.text_body as string, vars) : undefined,
       headers: cabecerasBaja(email, (campana.reply_to as string | null) ?? "baja@sinergeticos.com"),
       tags: [{ name: "campaign_id", value: campaignId }],
