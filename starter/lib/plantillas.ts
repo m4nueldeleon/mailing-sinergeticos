@@ -90,12 +90,10 @@ export function renderVariables(texto: string, vars: Record<string, string | und
 }
 
 const ESTILO = `
-  body { margin:0; padding:0; background:#f4f5f9; }
-  .wrap { width:100%; background:#f4f5f9; padding:32px 12px; }
-  .card { max-width:600px; margin:0 auto; background:#ffffff; border-radius:20px; overflow:hidden; border:1px solid #e2e4ee; }
-  .head { background:linear-gradient(135deg,#12193e,#0b1030); padding:28px 32px; color:#ffffff; font-family:Arial,Helvetica,sans-serif; border-bottom:2px solid #c9972e; }
-  .head .brand { font-size:20px; font-weight:800; letter-spacing:-0.3px; }
-  .body { padding:32px; font-family:Arial,Helvetica,sans-serif; color:#14183a; font-size:16px; line-height:1.55; }
+  body { margin:0; padding:0; background:#ffffff; }
+  .wrap { width:100%; background:#ffffff; padding:24px 12px; }
+  .card { max-width:600px; margin:0 auto; background:#ffffff; }
+  .body { padding:8px 24px 32px; font-family:Arial,Helvetica,sans-serif; color:#14183a; font-size:16px; line-height:1.55; }
   .body h1 { font-size:24px; margin:0 0 16px; color:#14183a; }
   .body p { margin:0 0 16px; }
   .btn { display:inline-block; background:#c9972e; color:#14183a !important; text-decoration:none; padding:14px 26px; border-radius:999px; font-weight:700; }
@@ -111,8 +109,11 @@ export interface DatosCorreo {
 }
 
 /**
- * Ensambla el HTML final con la marca (mismo look que ejemplos/plantilla-base.html:
- * cabecera, cuerpo por bloques, pie con dirección y baja obligatoria).
+ * Ensambla el HTML final: cuerpo por bloques + pie con dirección y baja obligatoria.
+ * A propósito SIN cabecera de marca ni tarjeta con borde/sombra — un bloque de
+ * logo con degradado es una de las señales más fuertes de "plantilla de
+ * marketing" para el clasificador de pestañas de Gmail (Promociones vs.
+ * Principal); esto se ve más a correo personal.
  * `{{unsubscribe_url}}` y `{{first_name|Hola}}` quedan como placeholders — se
  * resuelven por destinatario con renderVariables() al momento de mandar.
  */
@@ -129,7 +130,6 @@ export function ensamblarCorreo({ subject, preheader, blocks }: DatosCorreo): st
 <span class="pre">${escapar(preheader)}</span>
 <div class="wrap">
   <div class="card">
-    <div class="head"><div class="brand">Sinergéticos</div></div>
     <div class="body">
       ${renderBloques(blocks)}
     </div>
