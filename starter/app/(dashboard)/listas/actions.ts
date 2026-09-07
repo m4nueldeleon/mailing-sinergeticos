@@ -4,21 +4,34 @@ import { requireUser } from "@/lib/auth";
 import { createSupabaseAdmin } from "@/lib/supabase/server";
 import { contarSegmento, listarSegmento, type ContactoAxis, type FiltrosSegmento } from "@/lib/axis";
 
+function listaComas(raw: string): string[] | undefined {
+  const valores = raw.split(",").map((v) => v.trim()).filter(Boolean);
+  return valores.length > 0 ? valores : undefined;
+}
+
 function leerFiltros(formData: FormData): FiltrosSegmento {
   const etapas = formData.getAll("etapas").map(String) as FiltrosSegmento["etapas"];
   const mercados = formData.getAll("mercados").map(String) as FiltrosSegmento["mercados"];
   const nivelConsciencia = formData.getAll("nivelConsciencia").map(String) as FiltrosSegmento["nivelConsciencia"];
   const paisesRaw = String(formData.get("paises") ?? "").trim();
+  const regionesRaw = String(formData.get("regiones") ?? "").trim();
+  const ciudadesRaw = String(formData.get("ciudades") ?? "").trim();
+  const embudosRaw = String(formData.get("embudosOrigen") ?? "").trim();
   const membresia = String(formData.get("membresia") ?? "") as FiltrosSegmento["membresia"];
   const activosRaw = String(formData.get("activosEnDias") ?? "").trim();
+  const compraProducto = String(formData.get("compraProducto") ?? "").trim();
 
   return {
     etapas: etapas && etapas.length > 0 ? etapas : undefined,
     mercados: mercados && mercados.length > 0 ? mercados : undefined,
     nivelConsciencia: nivelConsciencia && nivelConsciencia.length > 0 ? nivelConsciencia : undefined,
-    paises: paisesRaw ? paisesRaw.split(",").map((p) => p.trim()).filter(Boolean) : undefined,
+    paises: paisesRaw ? listaComas(paisesRaw) : undefined,
+    regiones: regionesRaw ? listaComas(regionesRaw) : undefined,
+    ciudades: ciudadesRaw ? listaComas(ciudadesRaw) : undefined,
+    embudosOrigen: embudosRaw ? listaComas(embudosRaw) : undefined,
     membresia: membresia || undefined,
     activosEnDias: activosRaw ? Number(activosRaw) : undefined,
+    compraProducto: compraProducto || undefined,
   };
 }
 

@@ -94,6 +94,32 @@ export function SegmentosPanel() {
           </label>
         </div>
 
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--text-2)]">
+            Región (separadas por coma)
+            <input name="regiones" className="input-glass" placeholder="Cmx, Jal, Nle" />
+          </label>
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--text-2)]">
+            Ciudad (separadas por coma)
+            <input name="ciudades" className="input-glass" placeholder="Guadalajara, Monterrey" />
+          </label>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--text-2)]">
+            Embudo de origen — primer contacto (separados por coma)
+            <input
+              name="embudosOrigen"
+              className="input-glass"
+              placeholder="club-sinergetico, webinar-mx-mdl, bootcamp-2026"
+            />
+          </label>
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--text-2)]">
+            Compró un producto que contenga
+            <input name="compraProducto" className="input-glass" placeholder="Club Sinergético" />
+          </label>
+        </div>
+
         <button type="submit" disabled={calculando} className="btn-accent">
           {calculando ? "Calculando…" : "Vista previa"}
         </button>
@@ -138,37 +164,43 @@ export function SegmentosPanel() {
           {guardado.error ? <p className="text-sm text-[var(--danger)]">{guardado.error}</p> : null}
           {guardado.ok ? <p className="text-sm text-[var(--success)]">Segmento guardado.</p> : null}
 
-          <table className="table-glass">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Correo</th>
-                <th>País</th>
-                <th>Etapa</th>
-                <th>Nivel de consciencia</th>
-                <th>Puntaje</th>
-              </tr>
-            </thead>
-            <tbody>
-              {previa.muestra.map((c) => (
-                <tr key={c.id}>
-                  <td>{c.full_name || c.first_name || "—"}</td>
-                  <td>{c.email}</td>
-                  <td>{c.country || "—"}</td>
-                  <td className="capitalize">{c.lifecycle_stage}</td>
-                  <td>{NIVEL_LABEL[c.nivelConsciencia]}</td>
-                  <td>{c.puntaje}</td>
-                </tr>
-              ))}
-              {previa.muestra.length === 0 ? (
+          <div style={{ overflowX: "auto" }}>
+            <table className="table-glass">
+              <thead>
                 <tr>
-                  <td colSpan={6} className="text-center text-[var(--text-3)]">
-                    Sin contactos con estos filtros.
-                  </td>
+                  <th>Nombre</th>
+                  <th>Correo</th>
+                  <th>País</th>
+                  <th>Región</th>
+                  <th>Etapa</th>
+                  <th>Embudo de origen</th>
+                  <th>Nivel de consciencia</th>
+                  <th>Puntaje</th>
                 </tr>
-              ) : null}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {previa.muestra.map((c) => (
+                  <tr key={c.id}>
+                    <td>{c.full_name || c.first_name || "—"}</td>
+                    <td>{c.email}</td>
+                    <td>{c.country || "—"}</td>
+                    <td>{c.region || "—"}</td>
+                    <td className="capitalize">{c.lifecycle_stage}</td>
+                    <td>{c.firstFunnelSlug || "—"}</td>
+                    <td>{NIVEL_LABEL[c.nivelConsciencia]}</td>
+                    <td>{c.puntaje}</td>
+                  </tr>
+                ))}
+                {previa.muestra.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="text-center text-[var(--text-3)]">
+                      Sin contactos con estos filtros.
+                    </td>
+                  </tr>
+                ) : null}
+              </tbody>
+            </table>
+          </div>
         </section>
       ) : null}
     </div>

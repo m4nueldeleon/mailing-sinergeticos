@@ -22,12 +22,18 @@ function axisSql() {
 export interface FiltrosSegmento {
   etapas?: Etapa[];
   paises?: string[];
+  regiones?: string[];
+  ciudades?: string[];
   mercados?: Mercado[];
   /** solo contactos con membresía en este estado — lee contacts.membresia directo (ver nota abajo) */
   membresia?: "activa" | "expirada" | "revocada" | "inactiva";
   /** descartar contactos sin actividad en más de N días (cuida la reputación) */
   activosEnDias?: number;
   nivelConsciencia?: NivelConsciencia[];
+  /** `contacts.first_funnel_slug` — embudo por el que llegó la primera vez (first-touch) */
+  embudosOrigen?: string[];
+  /** coincidencia parcial contra `purchases.product_name` (los nombres reales no son un catálogo cerrado) */
+  compraProducto?: string;
 }
 
 export interface ContactoAxis {
@@ -36,9 +42,11 @@ export interface ContactoAxis {
   first_name: string | null;
   full_name: string | null;
   country: string | null;
+  region: string | null;
   lifecycle_stage: Etapa;
   nivelConsciencia: NivelConsciencia;
   puntaje: number;
+  firstFunnelSlug: string | null;
 }
 
 /**
@@ -85,17 +93,22 @@ const PUNTAJE_SQL = `
 export async function listarSegmento(f: FiltrosSegmento, limite = 1000, offset = 0): Promise<ContactoAxis[]> {
   const sql = axisSql();
   const filas = await sql<ContactoAxis[]>`
-    select c.id, c.email_normalized as email, c.first_name, c.full_name, c.country, c.lifecycle_stage,
+    select c.id, c.email_normalized as email, c.first_name, c.full_name, c.country, c.region, c.lifecycle_stage,
+           c.first_funnel_slug as "firstFunnelSlug",
            (${sql.unsafe(NIVEL_SQL)}) as "nivelConsciencia",
            (${sql.unsafe(PUNTAJE_SQL)})::int as puntaje
     from contacts c
     where true
       ${f.etapas?.length ? sql`and c.lifecycle_stage = any(${f.etapas})` : sql``}
       ${f.paises?.length ? sql`and c.country = any(${f.paises})` : sql``}
+      ${f.regiones?.length ? sql`and c.region = any(${f.regiones})` : sql``}
+      ${f.ciudades?.length ? sql`and c.city = any(${f.ciudades})` : sql``}
       ${f.mercados?.length ? sql`and c.ghl_account = any(${f.mercados})` : sql``}
       ${f.membresia ? sql`and c.membresia = ${f.membresia}` : sql``}
       ${f.activosEnDias ? sql`and c.last_activity_at >= now() - make_interval(days => ${f.activosEnDias})` : sql``}
       ${f.nivelConsciencia?.length ? sql`and (${sql.unsafe(NIVEL_SQL)}) = any(${f.nivelConsciencia})` : sql``}
+      ${f.embudosOrigen?.length ? sql`and c.first_funnel_slug = any(${f.embudosOrigen})` : sql``}
+      ${f.compraProducto ? sql`and exists (select 1 from purchases p where p.contact_id = c.id and p.product_name ilike ${"%" + f.compraProducto + "%"})` : sql``}
       ${EXCLUSION_BAJAS_ACTIVA ? sql`and c.email_normalized not in (select email from mail_supresion)` : sql``}
     order by puntaje desc, c.last_activity_at desc nulls last
     limit ${limite} offset ${offset}
@@ -111,10 +124,14 @@ export async function contarSegmento(f: FiltrosSegmento): Promise<number> {
     where true
       ${f.etapas?.length ? sql`and c.lifecycle_stage = any(${f.etapas})` : sql``}
       ${f.paises?.length ? sql`and c.country = any(${f.paises})` : sql``}
+      ${f.regiones?.length ? sql`and c.region = any(${f.regiones})` : sql``}
+      ${f.ciudades?.length ? sql`and c.city = any(${f.ciudades})` : sql``}
       ${f.mercados?.length ? sql`and c.ghl_account = any(${f.mercados})` : sql``}
       ${f.membresia ? sql`and c.membresia = ${f.membresia}` : sql``}
       ${f.activosEnDias ? sql`and c.last_activity_at >= now() - make_interval(days => ${f.activosEnDias})` : sql``}
       ${f.nivelConsciencia?.length ? sql`and (${sql.unsafe(NIVEL_SQL)}) = any(${f.nivelConsciencia})` : sql``}
+      ${f.embudosOrigen?.length ? sql`and c.first_funnel_slug = any(${f.embudosOrigen})` : sql``}
+      ${f.compraProducto ? sql`and exists (select 1 from purchases p where p.contact_id = c.id and p.product_name ilike ${"%" + f.compraProducto + "%"})` : sql``}
       ${EXCLUSION_BAJAS_ACTIVA ? sql`and c.email_normalized not in (select email from mail_supresion)` : sql``}
   `;
   return fila?.n ?? 0;
