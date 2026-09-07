@@ -90,18 +90,18 @@ export function renderVariables(texto: string, vars: Record<string, string | und
 }
 
 const ESTILO = `
-  body { margin:0; padding:0; background:#f2f1fa; }
-  .wrap { width:100%; background:#f2f1fa; padding:32px 12px; }
-  .card { max-width:600px; margin:0 auto; background:#ffffff; border-radius:20px; overflow:hidden; border:1px solid #e6e3f3; }
-  .head { background:linear-gradient(135deg,#7c3aed,#d946ef); padding:28px 32px; color:#ffffff; font-family:Arial,Helvetica,sans-serif; }
+  body { margin:0; padding:0; background:#f4f5f9; }
+  .wrap { width:100%; background:#f4f5f9; padding:32px 12px; }
+  .card { max-width:600px; margin:0 auto; background:#ffffff; border-radius:20px; overflow:hidden; border:1px solid #e2e4ee; }
+  .head { background:linear-gradient(135deg,#12193e,#0b1030); padding:28px 32px; color:#ffffff; font-family:Arial,Helvetica,sans-serif; border-bottom:2px solid #c9972e; }
   .head .brand { font-size:20px; font-weight:800; letter-spacing:-0.3px; }
-  .body { padding:32px; font-family:Arial,Helvetica,sans-serif; color:#17162b; font-size:16px; line-height:1.55; }
-  .body h1 { font-size:24px; margin:0 0 16px; color:#17162b; }
+  .body { padding:32px; font-family:Arial,Helvetica,sans-serif; color:#14183a; font-size:16px; line-height:1.55; }
+  .body h1 { font-size:24px; margin:0 0 16px; color:#14183a; }
   .body p { margin:0 0 16px; }
-  .btn { display:inline-block; background:#7c3aed; color:#ffffff !important; text-decoration:none; padding:14px 26px; border-radius:999px; font-weight:700; }
-  .foot { padding:20px 32px 28px; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.5; color:#6b6788; border-top:1px solid #e6e3f3; }
-  .foot a { color:#6d28d9; }
-  .pre { display:none; font-size:1px; color:#f2f1fa; line-height:1px; max-height:0; overflow:hidden; }
+  .btn { display:inline-block; background:#c9972e; color:#14183a !important; text-decoration:none; padding:14px 26px; border-radius:999px; font-weight:700; }
+  .foot { padding:20px 32px 28px; font-family:Arial,Helvetica,sans-serif; font-size:12px; line-height:1.5; color:#6b6788; border-top:1px solid #e2e4ee; }
+  .foot a { color:#12193e; }
+  .pre { display:none; font-size:1px; color:#f4f5f9; line-height:1px; max-height:0; overflow:hidden; }
 `;
 
 export interface DatosCorreo {

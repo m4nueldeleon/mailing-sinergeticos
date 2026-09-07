@@ -34,6 +34,8 @@ export interface FiltrosSegmento {
   embudosOrigen?: string[];
   /** coincidencia parcial contra `purchases.product_name` (los nombres reales no son un catálogo cerrado) */
   compraProducto?: string;
+  /** descarta a quien YA compró un producto que coincida (ej. no repetirle a quien ya compró Legendaria) */
+  compraProductoExcluir?: string;
 }
 
 export interface ContactoAxis {
@@ -109,6 +111,7 @@ export async function listarSegmento(f: FiltrosSegmento, limite = 1000, offset =
       ${f.nivelConsciencia?.length ? sql`and (${sql.unsafe(NIVEL_SQL)}) = any(${f.nivelConsciencia})` : sql``}
       ${f.embudosOrigen?.length ? sql`and c.first_funnel_slug = any(${f.embudosOrigen})` : sql``}
       ${f.compraProducto ? sql`and exists (select 1 from purchases p where p.contact_id = c.id and p.product_name ilike ${"%" + f.compraProducto + "%"})` : sql``}
+      ${f.compraProductoExcluir ? sql`and not exists (select 1 from purchases p where p.contact_id = c.id and p.product_name ilike ${"%" + f.compraProductoExcluir + "%"})` : sql``}
       ${EXCLUSION_BAJAS_ACTIVA ? sql`and c.email_normalized not in (select email from mail_supresion)` : sql``}
     order by puntaje desc, c.last_activity_at desc nulls last
     limit ${limite} offset ${offset}
@@ -132,6 +135,7 @@ export async function contarSegmento(f: FiltrosSegmento): Promise<number> {
       ${f.nivelConsciencia?.length ? sql`and (${sql.unsafe(NIVEL_SQL)}) = any(${f.nivelConsciencia})` : sql``}
       ${f.embudosOrigen?.length ? sql`and c.first_funnel_slug = any(${f.embudosOrigen})` : sql``}
       ${f.compraProducto ? sql`and exists (select 1 from purchases p where p.contact_id = c.id and p.product_name ilike ${"%" + f.compraProducto + "%"})` : sql``}
+      ${f.compraProductoExcluir ? sql`and not exists (select 1 from purchases p where p.contact_id = c.id and p.product_name ilike ${"%" + f.compraProductoExcluir + "%"})` : sql``}
       ${EXCLUSION_BAJAS_ACTIVA ? sql`and c.email_normalized not in (select email from mail_supresion)` : sql``}
   `;
   return fila?.n ?? 0;

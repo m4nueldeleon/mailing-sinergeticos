@@ -20,6 +20,7 @@ function leerFiltros(formData: FormData): FiltrosSegmento {
   const membresia = String(formData.get("membresia") ?? "") as FiltrosSegmento["membresia"];
   const activosRaw = String(formData.get("activosEnDias") ?? "").trim();
   const compraProducto = String(formData.get("compraProducto") ?? "").trim();
+  const compraProductoExcluir = String(formData.get("compraProductoExcluir") ?? "").trim();
 
   return {
     etapas: etapas && etapas.length > 0 ? etapas : undefined,
@@ -32,6 +33,7 @@ function leerFiltros(formData: FormData): FiltrosSegmento {
     membresia: membresia || undefined,
     activosEnDias: activosRaw ? Number(activosRaw) : undefined,
     compraProducto: compraProducto || undefined,
+    compraProductoExcluir: compraProductoExcluir || undefined,
   };
 }
 

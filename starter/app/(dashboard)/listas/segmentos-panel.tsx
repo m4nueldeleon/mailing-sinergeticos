@@ -120,6 +120,11 @@ export function SegmentosPanel() {
           </label>
         </div>
 
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--text-2)]">
+          Excluir a quien ya compró un producto que contenga
+          <input name="compraProductoExcluir" className="input-glass" placeholder="Legendaria" />
+        </label>
+
         <button type="submit" disabled={calculando} className="btn-accent">
           {calculando ? "Calculando…" : "Vista previa"}
         </button>
