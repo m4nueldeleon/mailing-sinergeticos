@@ -30,7 +30,7 @@ export default async function Page() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-7">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
                 <div>
                   <p className="text-xs text-[var(--text-3)]">Enviados</p>
                   <p className="font-display text-xl font-semibold">{fmt(r.enviados)}</p>
@@ -66,6 +66,21 @@ export default async function Page() {
                 <div>
                   <p className="text-xs text-[var(--text-3)]">Errores</p>
                   <p className="font-display text-xl font-semibold">{fmt(r.errores)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-[var(--text-3)]">Volvieron al embudo</p>
+                  <p className="font-display text-xl font-semibold">
+                    {r.entradasAFunnel === null ? (
+                      <span className="text-base text-[var(--text-3)]">—</span>
+                    ) : (
+                      <>
+                        {fmt(r.entradasAFunnel)}{" "}
+                        {r.aperturas > 0 && (
+                          <span className="text-sm text-[var(--text-2)]">({pct((r.entradasAFunnel / r.aperturas) * 100)})</span>
+                        )}
+                      </>
+                    )}
+                  </p>
                 </div>
               </div>
             </section>

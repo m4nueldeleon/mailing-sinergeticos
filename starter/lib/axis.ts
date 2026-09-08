@@ -119,6 +119,40 @@ export async function listarSegmento(f: FiltrosSegmento, limite = 1000, offset =
   return filas;
 }
 
+export interface AperturaConContacto {
+  contactId: string;
+  /** `sent_at` de ese envío — solo cuenta un touchpoint si pasó DESPUÉS. */
+  despuesDe: string;
+}
+
+/**
+ * De quienes abrieron un correo, cuántos tuvieron después un touchpoint de
+ * EMBUDO (`funnel_slug` no nulo) — la señal de que el correo no solo se vio,
+ * sino que trajo tráfico de vuelta. `touchpoints` está particionada por mes:
+ * siempre se filtra por `occurred_at` (nota del contrato en docs/03).
+ */
+export async function contarEntradasAFunnelTrasApertura(aperturas: AperturaConContacto[]): Promise<number> {
+  if (aperturas.length === 0) return 0;
+  const sql = axisSql();
+  const ids = aperturas.map((a) => a.contactId);
+  const minFecha = aperturas.reduce((min, a) => (a.despuesDe < min ? a.despuesDe : min), aperturas[0].despuesDe);
+  const filas = await sql<{ contact_id: string; primer_touchpoint: string }[]>`
+    select contact_id, min(occurred_at) as primer_touchpoint
+    from touchpoints
+    where contact_id = any(${ids})
+      and funnel_slug is not null
+      and occurred_at >= ${minFecha}
+    group by contact_id
+  `;
+  const primerTouchpoint = new Map(filas.map((f) => [f.contact_id, f.primer_touchpoint]));
+  let n = 0;
+  for (const a of aperturas) {
+    const tp = primerTouchpoint.get(a.contactId);
+    if (tp && tp > a.despuesDe) n += 1;
+  }
+  return n;
+}
+
 export async function contarSegmento(f: FiltrosSegmento): Promise<number> {
   const sql = axisSql();
   const [fila] = await sql<{ n: number }[]>`
