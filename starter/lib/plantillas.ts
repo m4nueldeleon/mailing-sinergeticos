@@ -135,7 +135,7 @@ export function ensamblarCorreo({ subject, preheader, blocks }: DatosCorreo): st
     </div>
     <div class="foot">
       Recibes este correo porque te registraste, compraste o eres miembro de Sinergéticos.<br>
-      Sinergéticos · [Dirección física legal — pendiente] · Zapopan, Jalisco, México<br>
+      Sinergéticos · C. Colima 130, El Mante, 45235 Zapopan, Jal., México<br>
       <a href="{{unsubscribe_url}}">Darme de baja</a> · <a href="https://www.sinergeticos.com/privacidad">Aviso de privacidad</a>
     </div>
   </div>
