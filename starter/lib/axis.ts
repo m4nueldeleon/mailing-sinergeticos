@@ -32,6 +32,10 @@ export interface FiltrosSegmento {
   nivelConsciencia?: NivelConsciencia[];
   /** `contacts.first_funnel_slug` — embudo por el que llegó la primera vez (first-touch) */
   embudosOrigen?: string[];
+  /** `touchpoints.funnel_slug` — tocó este embudo EN CUALQUIER MOMENTO, no solo al llegar.
+   *  Distinto de `embudosOrigen`: alguien pudo llegar por otro embudo y después entrar a este
+   *  (ej. abandonó el carrito de Legendaria sin haber llegado originalmente por ahí). */
+  tocoEmbudo?: string[];
   /** coincidencia parcial contra `purchases.product_name` (los nombres reales no son un catálogo cerrado) */
   compraProducto?: string;
   /** descarta a quien YA compró un producto que coincida (ej. no repetirle a quien ya compró Legendaria) */
@@ -110,6 +114,7 @@ export async function listarSegmento(f: FiltrosSegmento, limite = 1000, offset =
       ${f.activosEnDias ? sql`and c.last_activity_at >= now() - make_interval(days => ${f.activosEnDias})` : sql``}
       ${f.nivelConsciencia?.length ? sql`and (${sql.unsafe(NIVEL_SQL)}) = any(${f.nivelConsciencia})` : sql``}
       ${f.embudosOrigen?.length ? sql`and c.first_funnel_slug = any(${f.embudosOrigen})` : sql``}
+      ${f.tocoEmbudo?.length ? sql`and exists (select 1 from touchpoints tp where tp.contact_id = c.id and tp.funnel_slug = any(${f.tocoEmbudo}))` : sql``}
       ${f.compraProducto ? sql`and exists (select 1 from purchases p where p.contact_id = c.id and p.product_name ilike ${"%" + f.compraProducto + "%"})` : sql``}
       ${f.compraProductoExcluir ? sql`and not exists (select 1 from purchases p where p.contact_id = c.id and p.product_name ilike ${"%" + f.compraProductoExcluir + "%"})` : sql``}
       ${EXCLUSION_BAJAS_ACTIVA ? sql`and c.email_normalized not in (select email from mail_supresion)` : sql``}
@@ -168,6 +173,7 @@ export async function contarSegmento(f: FiltrosSegmento): Promise<number> {
       ${f.activosEnDias ? sql`and c.last_activity_at >= now() - make_interval(days => ${f.activosEnDias})` : sql``}
       ${f.nivelConsciencia?.length ? sql`and (${sql.unsafe(NIVEL_SQL)}) = any(${f.nivelConsciencia})` : sql``}
       ${f.embudosOrigen?.length ? sql`and c.first_funnel_slug = any(${f.embudosOrigen})` : sql``}
+      ${f.tocoEmbudo?.length ? sql`and exists (select 1 from touchpoints tp where tp.contact_id = c.id and tp.funnel_slug = any(${f.tocoEmbudo}))` : sql``}
       ${f.compraProducto ? sql`and exists (select 1 from purchases p where p.contact_id = c.id and p.product_name ilike ${"%" + f.compraProducto + "%"})` : sql``}
       ${f.compraProductoExcluir ? sql`and not exists (select 1 from purchases p where p.contact_id = c.id and p.product_name ilike ${"%" + f.compraProductoExcluir + "%"})` : sql``}
       ${EXCLUSION_BAJAS_ACTIVA ? sql`and c.email_normalized not in (select email from mail_supresion)` : sql``}

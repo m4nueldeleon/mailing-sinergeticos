@@ -17,6 +17,7 @@ function leerFiltros(formData: FormData): FiltrosSegmento {
   const regionesRaw = String(formData.get("regiones") ?? "").trim();
   const ciudadesRaw = String(formData.get("ciudades") ?? "").trim();
   const embudosRaw = String(formData.get("embudosOrigen") ?? "").trim();
+  const tocoEmbudoRaw = String(formData.get("tocoEmbudo") ?? "").trim();
   const membresia = String(formData.get("membresia") ?? "") as FiltrosSegmento["membresia"];
   const activosRaw = String(formData.get("activosEnDias") ?? "").trim();
   const compraProducto = String(formData.get("compraProducto") ?? "").trim();
@@ -30,6 +31,7 @@ function leerFiltros(formData: FormData): FiltrosSegmento {
     regiones: regionesRaw ? listaComas(regionesRaw) : undefined,
     ciudades: ciudadesRaw ? listaComas(ciudadesRaw) : undefined,
     embudosOrigen: embudosRaw ? listaComas(embudosRaw) : undefined,
+    tocoEmbudo: tocoEmbudoRaw ? listaComas(tocoEmbudoRaw) : undefined,
     membresia: membresia || undefined,
     activosEnDias: activosRaw ? Number(activosRaw) : undefined,
     compraProducto: compraProducto || undefined,

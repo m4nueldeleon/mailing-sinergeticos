@@ -115,15 +115,25 @@ export function SegmentosPanel() {
             />
           </label>
           <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--text-2)]">
-            Compró un producto que contenga
-            <input name="compraProducto" className="input-glass" placeholder="Club Sinergético" />
+            Tocó este embudo en algún momento (no solo al llegar)
+            <input
+              name="tocoEmbudo"
+              className="input-glass"
+              placeholder="legendaria-us, legendaria-ia"
+            />
           </label>
         </div>
 
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--text-2)]">
-          Excluir a quien ya compró un producto que contenga
-          <input name="compraProductoExcluir" className="input-glass" placeholder="Legendaria" />
-        </label>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--text-2)]">
+            Compró un producto que contenga
+            <input name="compraProducto" className="input-glass" placeholder="Club Sinergético" />
+          </label>
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--text-2)]">
+            Excluir a quien ya compró un producto que contenga
+            <input name="compraProductoExcluir" className="input-glass" placeholder="Legendar" />
+          </label>
+        </div>
 
         <button type="submit" disabled={calculando} className="btn-accent">
           {calculando ? "Calculando…" : "Vista previa"}
