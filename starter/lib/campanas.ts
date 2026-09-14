@@ -19,6 +19,11 @@ import { env } from "./env";
 
 const TAMANO_LOTE = 100;
 
+/** Igual que /api/lead — un solo correo sucio (una coma metida en la dirección,
+ * dato real visto en Axis el 10-sep-2026) tumbaba el lote de 100 completo:
+ * el batch de Resend rechaza la llamada entera si UN destinatario es inválido. */
+const EMAIL_VALIDO_RE = /^[^\s@,;]+@[^\s@,;]+\.[^\s@,;]+$/;
+
 interface DestinatarioCongelado {
   email: string;
   first_name: string | null;
@@ -142,12 +147,14 @@ export async function procesarSiguienteLote(admin: SupabaseClient, campaignId: s
 
   const { data: campana } = await admin
     .from("campaigns")
-    .select("name, subject, html, text_body, from_email, reply_to, totals")
+    .select("name, subject, html, text_body, from_name, from_email, reply_to, totals")
     .eq("id", campaignId)
     .maybeSingle();
   if (!campana) return { ok: false, error: "Campaña no encontrada.", terminada: false, enviadosEnEsteLote: 0 };
 
   const htmlEtiquetado = agregarUTM(campana.html as string, campaignId, campana.name as string);
+  const remitente =
+    campana.from_name && campana.from_email ? `${campana.from_name as string} <${campana.from_email as string}>` : undefined;
 
   const { data: yaEnviados } = await admin.from("campaign_sends").select("email").eq("campaign_id", campaignId);
   const setEnviados = new Set((yaEnviados ?? []).map((r) => r.email as string));
@@ -155,12 +162,45 @@ export async function procesarSiguienteLote(admin: SupabaseClient, campaignId: s
   const margen = Math.min(TAMANO_LOTE, cap - hoy);
   const { data: pendientesRaw } = await admin
     .from("campaign_recipients")
-    .select("email, first_name")
+    .select("email, first_name, batch_no")
     .eq("campaign_id", campaignId)
-    .order("email")
+    .order("batch_no", { ascending: true })
+    .order("email", { ascending: true })
     .limit(2000); // suficiente para filtrar y sacar el siguiente margen; la tabla ya está acotada por campaña
 
-  const pendientes = (pendientesRaw ?? []).filter((r) => !setEnviados.has(r.email as string)).slice(0, margen);
+  const candidatos = (pendientesRaw ?? []).filter((r) => !setEnviados.has(r.email as string));
+
+  // Descarta de una vez los correos con formato inválido (dato sucio de Axis):
+  // van directo a campaign_sends como error, nunca al lote — así no vuelven a
+  // tapar el margen del día ni a tumbar el batch completo de Resend.
+  const invalidos = candidatos.filter((r) => !EMAIL_VALIDO_RE.test(r.email as string));
+  if (invalidos.length > 0) {
+    await admin.from("campaign_sends").upsert(
+      invalidos.map((r) => ({
+        campaign_id: campaignId,
+        email: r.email as string,
+        idem_key: `${campaignId}:${r.email as string}`,
+        status: "error",
+        error: "Formato de correo inválido — dato sucio de Axis, se excluye del envío",
+      })),
+      { onConflict: "idem_key", ignoreDuplicates: true },
+    );
+  }
+
+  const candidatosValidos = candidatos.filter((r) => EMAIL_VALIDO_RE.test(r.email as string));
+  // Un lote nunca cruza dos batch_no distintos: batch_no es fijo desde que se
+  // congelaron los destinatarios (congelarDestinatarios), así que agrupar por
+  // él da una llave de idempotencia ESTABLE entre reintentos. Antes se usaba
+  // `offset: setEnviados.size` — un conteo que cambia si el envío se
+  // reintenta después de un fallo a medias o si la campaña se edita mientras
+  // envía, y Resend rechaza el reintento entero ("idempotency key... request
+  // body was modified") aunque los destinatarios sean válidos. Bug real:
+  // campaña MX del 10-sep-2026, 198 de 203 errores fueron por esto.
+  const siguienteBatchNo = candidatosValidos[0]?.batch_no as number | undefined;
+  const pendientes =
+    siguienteBatchNo === undefined
+      ? []
+      : candidatosValidos.filter((r) => r.batch_no === siguienteBatchNo).slice(0, margen);
 
   if (pendientes.length === 0) {
     const totalEnviados = setEnviados.size;
@@ -182,10 +222,12 @@ export async function procesarSiguienteLote(admin: SupabaseClient, campaignId: s
       text: campana.text_body ? renderVariables(campana.text_body as string, vars) : undefined,
       headers: cabecerasBaja(email, (campana.reply_to as string | null) ?? "baja@sinergeticos.com"),
       tags: [{ name: "campaign_id", value: campaignId }],
+      from: remitente,
+      reply_to: (campana.reply_to as string | null) ?? undefined,
     };
   });
 
-  const idemKey = `campaign:${campaignId}:offset:${setEnviados.size}`;
+  const idemKey = `campaign:${campaignId}:batch:${siguienteBatchNo}`;
   const resultado = await enviarLote(correos, idemKey);
 
   const filasSends = correos.map((c, i) => ({
