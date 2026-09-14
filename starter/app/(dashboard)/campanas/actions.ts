@@ -166,14 +166,22 @@ export async function enviarPruebaCampana(_prev: EstadoPrueba, formData: FormDat
   if (destinatarios.length === 0) return { ok: false, error: "Escribe al menos un correo interno válido.", enviados: 0 };
 
   const admin = await createSupabaseAdmin();
-  const { data: campana } = await admin.from("campaigns").select("subject, html, text_body").eq("id", id).maybeSingle();
+  const { data: campana } = await admin
+    .from("campaigns")
+    .select("subject, html, text_body, from_name, from_email, reply_to")
+    .eq("id", id)
+    .maybeSingle();
   if (!campana) return { ok: false, error: "Campaña no encontrada.", enviados: 0 };
 
+  const remitente =
+    campana.from_name && campana.from_email ? `${campana.from_name as string} <${campana.from_email as string}>` : undefined;
   const correos = destinatarios.map((email) => ({
     to: email,
     subject: `[PRUEBA] ${campana.subject as string}`,
     html: renderVariables(campana.html as string, { first_name: "Prueba", email, unsubscribe_url: urlBaja(email) }),
     text: campana.text_body ? renderVariables(campana.text_body as string, { first_name: "Prueba", email, unsubscribe_url: urlBaja(email) }) : undefined,
+    from: remitente,
+    reply_to: (campana.reply_to as string | null) ?? undefined,
   }));
 
   const resultado = await enviarLote(correos, `prueba-campana:${id}:${Date.now()}`);

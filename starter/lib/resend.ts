@@ -13,6 +13,9 @@ export interface CorreoLote {
   tags?: { name: string; value: string }[];
   /** ISO 8601 o "in 1 hour"; opcional */
   scheduled_at?: string;
+  /** "Nombre <correo>" — si no viene, cae al MAIL_FROM global. */
+  from?: string;
+  reply_to?: string;
 }
 
 export type ResultadoLote =
@@ -30,9 +33,9 @@ export async function enviarLote(correos: CorreoLote[], idempotencyKey: string):
   if (!apiKey || !from) return { ok: false, status: 0, error: "Falta RESEND_API_KEY o MAIL_FROM" };
 
   const cuerpo = correos.map((c) => ({
-    from,
+    from: c.from ?? from,
     to: [c.to],
-    reply_to: env.mailReplyTo(),
+    reply_to: c.reply_to ?? env.mailReplyTo(),
     subject: c.subject,
     html: c.html,
     text: c.text,
