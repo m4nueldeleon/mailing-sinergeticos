@@ -10,10 +10,10 @@
    ══════════════════════════════════════════════════════════ */
 
 :root {
-  --accent: #1e3a8a;              /* azul rey */
-  --accent-strong: #16296b;
-  --accent-soft: rgba(30, 58, 138, 0.08);
-  --accent-glow: rgba(30, 58, 138, 0.28);
+  --accent: #12193e;              /* indigo profundo (antes azul rey #1e3a8a) */
+  --accent-strong: #0b1030;
+  --accent-soft: rgba(18, 25, 62, 0.08);
+  --accent-glow: rgba(18, 25, 62, 0.28);
   --accent-cyan: #2563eb;         /* azul secundario, para info/enlaces */
   --accent-cyan-soft: rgba(37, 99, 235, 0.1);
   --accent-magenta: #c9972e;      /* dorado — reusa el slot "magenta" del tema base */

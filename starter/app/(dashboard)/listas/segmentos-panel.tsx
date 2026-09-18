@@ -7,6 +7,7 @@ import {
   type EstadoPrevia,
   type EstadoGuardar,
 } from "./actions";
+import { NIVEL_LABEL, EXCLUSION_BAJAS_ACTIVA, type NivelConsciencia } from "@/lib/axis-types";
 
 const ESTADO_PREVIA: EstadoPrevia = { ok: false, error: null, total: null, muestra: [], filtros: null };
 const ESTADO_GUARDAR: EstadoGuardar = { ok: false, error: null };
@@ -24,6 +25,10 @@ const MERCADOS = [
   { value: "mexico", label: "México" },
   { value: "latam", label: "Latam" },
 ] as const;
+
+const NIVELES: { value: NivelConsciencia; label: string }[] = (
+  Object.entries(NIVEL_LABEL) as [NivelConsciencia, string][]
+).map(([value, label]) => ({ value, label }));
 
 export function SegmentosPanel() {
   const [previa, previsualizarAction, calculando] = useActionState(previsualizarSegmento, ESTADO_PREVIA);
@@ -58,6 +63,16 @@ export function SegmentosPanel() {
           ))}
         </fieldset>
 
+        <fieldset className="flex flex-wrap gap-2">
+          <legend className="mb-2 w-full text-sm font-medium text-[var(--text-2)]">Nivel de consciencia</legend>
+          {NIVELES.map((n) => (
+            <label key={n.value} className="chip cursor-pointer border-[var(--border)] bg-[var(--veil)] has-[:checked]:border-[var(--accent)] has-[:checked]:bg-[var(--accent-soft)]">
+              <input type="checkbox" name="nivelConsciencia" value={n.value} className="sr-only" />
+              {n.label}
+            </label>
+          ))}
+        </fieldset>
+
         <div className="grid gap-4 sm:grid-cols-3">
           <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--text-2)]">
             Países (separados por coma)
@@ -79,6 +94,47 @@ export function SegmentosPanel() {
           </label>
         </div>
 
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--text-2)]">
+            Región (separadas por coma)
+            <input name="regiones" className="input-glass" placeholder="Cmx, Jal, Nle" />
+          </label>
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--text-2)]">
+            Ciudad (separadas por coma)
+            <input name="ciudades" className="input-glass" placeholder="Guadalajara, Monterrey" />
+          </label>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--text-2)]">
+            Embudo de origen — primer contacto (separados por coma)
+            <input
+              name="embudosOrigen"
+              className="input-glass"
+              placeholder="club-sinergetico, webinar-mx-mdl, bootcamp-2026"
+            />
+          </label>
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--text-2)]">
+            Tocó este embudo en algún momento (no solo al llegar)
+            <input
+              name="tocoEmbudo"
+              className="input-glass"
+              placeholder="legendaria-us, legendaria-ia"
+            />
+          </label>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--text-2)]">
+            Compró un producto que contenga
+            <input name="compraProducto" className="input-glass" placeholder="Club Sinergético" />
+          </label>
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--text-2)]">
+            Excluir a quien ya compró un producto que contenga
+            <input name="compraProductoExcluir" className="input-glass" placeholder="Legendar" />
+          </label>
+        </div>
+
         <button type="submit" disabled={calculando} className="btn-accent">
           {calculando ? "Calculando…" : "Vista previa"}
         </button>
@@ -92,6 +148,12 @@ export function SegmentosPanel() {
 
       {previa.ok ? (
         <section className="glass rise space-y-4 p-6">
+          {!EXCLUSION_BAJAS_ACTIVA ? (
+            <p className="rounded-xl border border-[var(--danger)] bg-[var(--danger-soft)] px-4 py-3 text-sm text-[var(--danger)]">
+              ⚠️ La exclusión de bajas (mail_supresion) todavía no funciona — falta un permiso pendiente con Manuel/David.
+              Esta vista previa puede incluir gente que ya se dio de baja. No mandes nada real todavía.
+            </p>
+          ) : null}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="font-display text-lg font-semibold">
@@ -117,33 +179,43 @@ export function SegmentosPanel() {
           {guardado.error ? <p className="text-sm text-[var(--danger)]">{guardado.error}</p> : null}
           {guardado.ok ? <p className="text-sm text-[var(--success)]">Segmento guardado.</p> : null}
 
-          <table className="table-glass">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Correo</th>
-                <th>País</th>
-                <th>Etapa</th>
-              </tr>
-            </thead>
-            <tbody>
-              {previa.muestra.map((c) => (
-                <tr key={c.id}>
-                  <td>{c.full_name || c.first_name || "—"}</td>
-                  <td>{c.email}</td>
-                  <td>{c.country || "—"}</td>
-                  <td className="capitalize">{c.lifecycle_stage}</td>
-                </tr>
-              ))}
-              {previa.muestra.length === 0 ? (
+          <div style={{ overflowX: "auto" }}>
+            <table className="table-glass">
+              <thead>
                 <tr>
-                  <td colSpan={4} className="text-center text-[var(--text-3)]">
-                    Sin contactos con estos filtros.
-                  </td>
+                  <th>Nombre</th>
+                  <th>Correo</th>
+                  <th>País</th>
+                  <th>Región</th>
+                  <th>Etapa</th>
+                  <th>Embudo de origen</th>
+                  <th>Nivel de consciencia</th>
+                  <th>Puntaje</th>
                 </tr>
-              ) : null}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {previa.muestra.map((c) => (
+                  <tr key={c.id}>
+                    <td>{c.full_name || c.first_name || "—"}</td>
+                    <td>{c.email}</td>
+                    <td>{c.country || "—"}</td>
+                    <td>{c.region || "—"}</td>
+                    <td className="capitalize">{c.lifecycle_stage}</td>
+                    <td>{c.firstFunnelSlug || "—"}</td>
+                    <td>{NIVEL_LABEL[c.nivelConsciencia]}</td>
+                    <td>{c.puntaje}</td>
+                  </tr>
+                ))}
+                {previa.muestra.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="text-center text-[var(--text-3)]">
+                      Sin contactos con estos filtros.
+                    </td>
+                  </tr>
+                ) : null}
+              </tbody>
+            </table>
+          </div>
         </section>
       ) : null}
     </div>
